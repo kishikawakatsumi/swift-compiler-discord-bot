@@ -13,7 +13,7 @@ client.on("message", (message) => {
 
     const command = message.content.replace(new RegExp('<@' + client.user.id + '>', 'g'), '').trim();
     if (command == 'versions') {
-      message.channel.send(availableVersions.join(', '));
+      message.channel.send('Available Swift versions:\n```' + availableVersions.join('\n') + '\n```');
       return;
     }
 
