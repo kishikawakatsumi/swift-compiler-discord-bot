@@ -20,6 +20,8 @@ client.on("message", (message) => {
       message.channel.send('Available Swift versions:\n```\n' + availableVersions.join('\n') + '\n```');
       return;
     }
+    console.log(command);
+    console.log(command == 'contribute');
     if (command == 'contribute') {
       message.channel.send('https://github.com/kishikawakatsumi/swift-playground');
       message.channel.send('https://github.com/kishikawakatsumi/swift-compiler-discord-bot');
