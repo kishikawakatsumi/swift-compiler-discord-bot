@@ -9,6 +9,14 @@ client.on("ready", () => {
 
 client.on("message", (message) => {
   if (message.isMentioned(client.user)) {
+    const availableVersions = ['2018-03-31-a', '4.1', '4.0.3', '3.1.1', '3.0.2']
+
+    const command = message.content.replace(new RegExp('<@' + client.user.id + '>', 'g'), '').trim();
+    if (command == 'versions') {
+      message.channel.send(availableVersions.join(', '));
+      return;
+    }
+
     const regex = /```swift\n([\s\S]*?\n)```/g;
     const match = regex.exec(message.content);
     if (match) {
@@ -21,7 +29,7 @@ client.on("message", (message) => {
       }
       const defaultVersion = '4.1';
       let version = parsedArguments.version || defaultVersion;
-      if (!['2018-03-31-a', '4.1', '4.0.3', '3.1.1', '3.0.2'].includes(version.toString())) {
+      if (!availableVersions.includes(version.toString())) {
         message.reply('Swift version \'' + version + '\' is not supported. Use \'' + defaultVersion + '\'.');
         version = defaultVersion;
       }
