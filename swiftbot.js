@@ -66,7 +66,9 @@ client.on("message", (message) => {
         body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
       }, function (error, response, body) {
         const results = JSON.parse(body);
-        message.channel.send('```\n' + results.output + results.errors + '\n```', { split: true });
+        message.channel.send('```\n' + results.version + '\n```');
+        message.channel.send('```\n' + results.output + '\n```', { split: true });
+        message.channel.send('```\n' + results.errors + '\n```', { split: true });
       });
     }
   }
