@@ -21,7 +21,7 @@ client.on("message", (message) => {
       }
       const defaultVersion = '4.1';
       let version = parsedArguments.version || defaultVersion;
-      if (!['4.1', '4.0.3'].includes(version.toString())) {
+      if (!['2018-03-31-a', '4.1', '4.0.3', '3.1.1', '3.0.2'].includes(version.toString())) {
         message.reply('Swift version \'' + version + '\' is not supported. Use \'' + defaultVersion + '\'.');
         version = defaultVersion;
       }
