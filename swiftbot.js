@@ -20,6 +20,11 @@ client.on("message", (message) => {
       message.channel.send('Available Swift versions:\n```\n' + availableVersions.join('\n') + '\n```');
       return;
     }
+    if (command == 'contribute') {
+      message.channel.send('https://github.com/kishikawakatsumi/swift-playground');
+      message.channel.send('https://github.com/kishikawakatsumi/swift-compiler-discord-bot');
+      return;
+    }
 
     const regex = /```swift\n([\s\S]*?\n)```/g;
     const match = regex.exec(message.content);
