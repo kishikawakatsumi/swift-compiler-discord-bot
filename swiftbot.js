@@ -12,6 +12,10 @@ client.on("message", (message) => {
     const availableVersions = ['2018-03-31-a', '4.1', '4.0.3', '3.1.1', '3.0.2']
 
     const command = message.content.replace(new RegExp('<@' + client.user.id + '>', 'g'), '').trim();
+    if (command == 'help') {
+      message.channel.send('```\nUsage:\n  @swiftbot [--version=SWIFT_VERSION] [--command={swift, swiftc}] [--options=SWIFTC_OPTIONS]\n\n@swiftbot versions: show available Swift toolchain versions\n@swiftbot help: show help\n```');
+      return;
+    }
     if (command == 'versions') {
       message.channel.send('Available Swift versions:\n```\n' + availableVersions.join('\n') + '\n```');
       return;
