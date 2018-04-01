@@ -67,8 +67,12 @@ client.on("message", (message) => {
       }, function (error, response, body) {
         const results = JSON.parse(body);
         message.channel.send('```\n' + results.version + '\n```');
-        message.channel.send('```\n' + results.output + '\n```', { split: true });
-        message.channel.send('```\n' + results.errors + '\n```', { split: true });
+        if (results.output) {
+          message.channel.send('```\n' + results.output + '\n```', { split: true });
+        }
+        if (results.errors) {
+          message.channel.send('```\n' + results.errors + '\n```', { split: true });
+        }
       });
     }
   }
