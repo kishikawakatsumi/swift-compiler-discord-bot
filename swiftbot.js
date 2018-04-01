@@ -22,18 +22,19 @@ client.on("message", (message) => {
       const defaultVersion = '4.1'
       let version = parsedArguments.version || defaultVersion
       if (!['4.1', '4.0.3'].includes(version.toString())) {
-        message.reply('Swift version \'' + version + '\' is not supported. Use \'' + defaultVersion + '\' instead.');
+        message.reply('Swift version \'' + version + '\' is not supported. Use \'' + defaultVersion + '\'.');
         version = defaultVersion
       }
 
       const defaultCommand = 'swift'
       let command = parsedArguments.command || defaultCommand
       if (!['swift', 'swiftc'].includes(command)) {
-        message.reply('\'' + command + '\' is not supported. Use \'' + defaultCommand + '\' instead.');
+        message.reply('\'' + command + '\' is not supported. Use \'' + defaultCommand + '\'.');
         command = defaultCommand
       }
 
       const options = parsedArguments.options || ''
+      console.log(options);
 
       const defaultTimeout = 60
       let timeout = parsedArguments.timeout || defaultTimeout
