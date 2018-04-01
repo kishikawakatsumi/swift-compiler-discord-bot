@@ -54,7 +54,7 @@ client.on("message", (message) => {
         body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
       }, function (error, response, body) {
         const results = JSON.parse(body);
-        message.reply('```\n' + results.errors + results.output + '\n```', { split: true });
+        message.reply('```\n' + results.output + results.errors + '\n```', { split: true });
       });
     }
   }
