@@ -14,36 +14,35 @@ client.on("message", (message) => {
     if (match) {
       const code = match[1];
 
-      const args = message.content.split('\n')
-      let parsedArguments = {}
+      const args = message.content.split('\n');
+      let parsedArguments = {};
       if (args.length > 0) {
-        parsedArguments = require('yargs-parser')(args[0])
+        parsedArguments = require('yargs-parser')(args[0]);
       }
-      const defaultVersion = '4.1'
-      let version = parsedArguments.version || defaultVersion
+      const defaultVersion = '4.1';
+      let version = parsedArguments.version || defaultVersion;
       if (!['4.1', '4.0.3'].includes(version.toString())) {
         message.reply('Swift version \'' + version + '\' is not supported. Use \'' + defaultVersion + '\'.');
-        version = defaultVersion
+        version = defaultVersion;
       }
 
-      const defaultCommand = 'swift'
-      let command = parsedArguments.command || defaultCommand
+      const defaultCommand = 'swift';
+      let command = parsedArguments.command || defaultCommand;
       if (!['swift', 'swiftc'].includes(command)) {
         message.reply('\'' + command + '\' is not supported. Use \'' + defaultCommand + '\'.');
-        command = defaultCommand
+        command = defaultCommand;
       }
 
-      const options = parsedArguments.options || ''
-      console.log(options);
+      const options = parsedArguments.options || '';
 
-      const defaultTimeout = 60
-      let timeout = parsedArguments.timeout || defaultTimeout
-      timeout = parseInt(timeout)
-      const maxTimeout = 60
+      const defaultTimeout = 60;
+      let timeout = parsedArguments.timeout || defaultTimeout;
+      timeout = parseInt(timeout);
+      const maxTimeout = 60;
       if (isNaN(timeout)) {
-        timeout = defaultTimeout
+        timeout = defaultTimeout;
       } else if (timeout > maxTimeout) {
-        timeout = maxTimeout
+        timeout = maxTimeout;
       }
 
       const request = require("request");
@@ -54,7 +53,7 @@ client.on("message", (message) => {
         },
         body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
       }, function (error, response, body) {
-        const results = JSON.parse(body)
+        const results = JSON.parse(body);
         message.reply('```\n' + results.errors + results.output + '\n```');
       });
     }
