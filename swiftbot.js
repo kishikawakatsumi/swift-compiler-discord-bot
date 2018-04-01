@@ -34,14 +34,14 @@ client.on("message", (message) => {
       const defaultVersion = '4.1';
       let version = parsedArguments.version || defaultVersion;
       if (!availableVersions.includes(version.toString())) {
-        message.reply('Swift version \'' + version + '\' is not supported. Use \'' + defaultVersion + '\'.');
+        message.channel.send('Swift version \'' + version + '\' is not supported. Use \'' + defaultVersion + '\'.');
         version = defaultVersion;
       }
 
       const defaultCommand = 'swift';
       let command = parsedArguments.command || defaultCommand;
       if (!['swift', 'swiftc'].includes(command)) {
-        message.reply('\'' + command + '\' is not supported. Use \'' + defaultCommand + '\'.');
+        message.channel.send('\'' + command + '\' is not supported. Use \'' + defaultCommand + '\'.');
         command = defaultCommand;
       }
 
@@ -66,7 +66,7 @@ client.on("message", (message) => {
         body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
       }, function (error, response, body) {
         const results = JSON.parse(body);
-        message.reply('```\n' + results.output + results.errors + '\n```', { split: true });
+        message.channel.send('```\n' + results.output + results.errors + '\n```', { split: true });
       });
     }
   }
