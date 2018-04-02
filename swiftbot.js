@@ -90,9 +90,14 @@ ${availableVersions.join('\n')}
       body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
     }, function (error, response, body) {
       const results = JSON.parse(body);
+      const versionLines = results.version.split('\n')
+      let versionString = results.version
+      if (versionLines.length > 0) {
+        versionString = versionLines[0]
+      }
       message.channel.send(`
 \`\`\`
-${results.version}
+${versionString}
 \`\`\`
         `.trim());
       if (results.output) {
