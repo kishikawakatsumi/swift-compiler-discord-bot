@@ -15,7 +15,7 @@ client.on("message", (message) => {
   const availableVersions = ['2018-03-31-a', '4.1', '4.0.3', '3.1.1', '3.0.2']
 
   const command = message.content.replace(new RegExp('<@' + client.user.id + '>', 'g'), '').trim();
-  if (command == 'help') {
+  if (command == 'help' || command == '') {
     message.channel.send(`
 \`\`\`
 Usage:
@@ -24,6 +24,23 @@ Usage:
   [Swift Code]
   \`​\`​\`
   
+Examples:
+  @swiftbot
+  \`​\`​\`
+  print("Hello world!")
+  \`​\`​\`
+  
+  @swiftbot --version=4.0.3
+  \`​\`​\`
+  print("Hello world!")
+  \`​\`​\`
+  
+  @swiftbot --command=swiftc --options=-dump-parse
+  \`​\`​\`
+  print("Hello world!")
+  \`​\`​\`
+
+Subcommands:
   @swiftbot versions: show available Swift toolchain versions
   @swiftbot contribute: show repository URLs
   @swiftbot help: show help
@@ -56,6 +73,7 @@ ${availableVersions.join('\n')}
     if (args.length > 0) {
       parsedArguments = require('yargs-parser')(args[0]);
     }
+
     const defaultVersion = '4.1';
     let version = parsedArguments.version || defaultVersion;
     if (!availableVersions.includes(version.toString())) {
