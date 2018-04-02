@@ -52,10 +52,10 @@ client.on("message", (message) => {
 
       const options = parsedArguments.options || '';
 
-      const defaultTimeout = 60;
+      const defaultTimeout = 30;
       let timeout = parsedArguments.timeout || defaultTimeout;
       timeout = parseInt(timeout);
-      const maxTimeout = 60;
+      const maxTimeout = 600;
       if (isNaN(timeout)) {
         timeout = defaultTimeout;
       } else if (timeout > maxTimeout) {
