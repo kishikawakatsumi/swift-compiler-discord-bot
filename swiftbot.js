@@ -45,7 +45,7 @@ ${availableVersions.join('\n')}
     return;
   }
 
-  const regex = /```swift\n([\s\S]*?\n)```/g;
+  const regex = /```[a-zA-Z]*\n([\s\S]*?\n)```/;
   const match = regex.exec(message.content);
   if (match) {
     const code = match[1];
