@@ -16,11 +16,27 @@ client.on("message", (message) => {
 
   const command = message.content.replace(new RegExp('<@' + client.user.id + '>', 'g'), '').trim();
   if (command == 'help') {
-    message.channel.send('```\nUsage:\n  @swiftbot [--version=SWIFT_VERSION] [--command={swift, swiftc}] [--options=SWIFTC_OPTIONS]\n\n@swiftbot versions: show available Swift toolchain versions\n@swiftbot help: show help\n```');
+    message.channel.send(`
+\`\`\`
+Usage:
+  @swiftbot [--version=SWIFT_VERSION] [--command={swift, swiftc}] [--options=SWIFTC_OPTIONS]
+  \`​\`​\`
+  [Swift Code]
+  \`​\`​\`
+  
+  @swiftbot versions: show available Swift toolchain versions
+  @swiftbot help: show help
+\`\`\`
+      `.trim());
     return;
   }
   if (command == 'versions') {
-    message.channel.send('Available Swift versions:\n```\n' + availableVersions.join('\n') + '\n```');
+    message.channel.send(`
+Available Swift versions:
+\`\`\`
+${availableVersions.join('\n')}
+\`\`\`
+      `.trim());
     return;
   }
   if (command == 'contribute') {
@@ -42,15 +58,15 @@ client.on("message", (message) => {
     const defaultVersion = '4.1';
     let version = parsedArguments.version || defaultVersion;
     if (!availableVersions.includes(version.toString())) {
-      message.channel.send('Swift version \'' + version + '\' is not supported. Use \'' + defaultVersion + '\'.');
-      version = defaultVersion;
+      message.channel.send(`Swift '${version}' toolchain is not supported.`);
+      return;
     }
 
     const defaultCommand = 'swift';
     let command = parsedArguments.command || defaultCommand;
     if (!['swift', 'swiftc'].includes(command)) {
-      message.channel.send('\'' + command + '\' is not supported. Use \'' + defaultCommand + '\'.');
-      command = defaultCommand;
+      message.channel.send(`Command '${command}' is not supported.`);
+      return;
     }
 
     const options = parsedArguments.options || '';
@@ -69,17 +85,29 @@ client.on("message", (message) => {
     request.post({
       url: "https://swift-playground.kishikawakatsumi.com/run",
       headers: {
-        "content-type": "application/json"
+        'content-type': 'application/json'
       },
       body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
     }, function (error, response, body) {
       const results = JSON.parse(body);
-      message.channel.send('```\n' + results.version + '\n```');
+      message.channel.send(`
+\`\`\`
+${results.version}
+\`\`\`
+        `.trim());
       if (results.output) {
-        message.channel.send('```\n' + results.output + '\n```', { split: true });
+        message.channel.send(`
+\`\`\`
+${results.output}
+\`\`\`
+          `.trim(), { split: true });
       }
       if (results.errors) {
-        message.channel.send('```\n' + results.errors + '\n```', { split: true });
+        message.channel.send(`
+\`\`\`
+${results.errors}
+\`\`\`
+          `.trim(), { split: true });
       }
     });
   }
