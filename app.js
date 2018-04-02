@@ -25,6 +25,7 @@ Usage:
   \`​\`​\`
   
   @swiftbot versions: show available Swift toolchain versions
+  @swiftbot contribute: show repository URLs
   @swiftbot help: show help
 \`\`\`
       `.trim());
