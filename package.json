@@ -1,21 +1,14 @@
 {
   "name": "swiftbot",
   "version": "0.1.0",
-  "description": "",
-  "main": "swiftbot.js",
+  "description": "Swift Compiler Discord Bot",
+  "main": "app.js",
   "scripts": {
-    "start": "node swiftbot.js"
+    "start": "node app.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kishikawakatsumi/swift-compiler-discord-bot.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/kishikawakatsumi/swift-compiler-discord-bot/issues"
-  },
-  "homepage": "https://github.com/kishikawakatsumi/swift-compiler-discord-bot#readme",
+  "repository": "github:kishikawakatumi/swift-compiler-discord-bot",
+  "author": "Katsumi Kishikawa",
+  "license": "MIT",
   "dependencies": {
     "discord.js": "^11.3.2",
     "request": "^2.85.0",
