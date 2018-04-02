@@ -124,14 +124,14 @@ ${versionString}
 \`\`\`
 ${results.output}
 \`\`\`
-          `.trim(), { split: true });
+          `.trim());
       }
       if (results.errors) {
         message.channel.send(`
 \`\`\`
 ${results.errors}
 \`\`\`
-          `.trim(), { split: true });
+          `.trim());
       }
     });
   }
