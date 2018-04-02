@@ -1,7 +1,7 @@
 'use strict';
 
-const Discord = require("discord.js");
-const client = new Discord.Client();
+const { Client, MessageAttachment, Util } = require('discord.js');
+const client = new Client();
 
 client.on("ready", () => {
   console.log("Swift compiler bot is ready!");
@@ -108,7 +108,9 @@ ${availableVersions.join('\n')}
       },
       body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
     }, function (error, response, body) {
+      const maxLength = 1950;
       const results = JSON.parse(body);
+
       const versionLines = results.version.split('\n')
       let versionString = results.version
       if (versionLines.length > 0) {
@@ -119,19 +121,47 @@ ${availableVersions.join('\n')}
 ${versionString}
 \`\`\`
         `.trim());
+
       if (results.output) {
-        message.channel.send(`
+        if (results.output.length <= maxLength) {
+          message.channel.send(`
 \`\`\`
 ${results.output}
 \`\`\`
-          `.trim());
+            `.trim());
+        } else {
+          const messages = Util.splitMessage(results.output);
+          if (Array.isArray(messages) && messages.length > 0) {
+            message.channel.send(`
+\`\`\`
+${messages[0]}
+...
+\`\`\`
+              `.trim());
+          }
+          message.channel.send({files: [{attachment: Buffer.from(results.output, 'utf8'), name: 'stdout.txt'}]})
+        }
       }
+
       if (results.errors) {
-        message.channel.send(`
+        if (results.errors.length <= maxLength) {
+          message.channel.send(`
 \`\`\`
 ${results.errors}
 \`\`\`
-          `.trim());
+            `.trim());
+        } else {
+          const messages = Util.splitMessage(results.errors);
+          if (Array.isArray(messages) && messages.length > 0) {
+            message.channel.send(`
+\`\`\`
+${messages[0]}
+...
+\`\`\`
+              `.trim());
+          }
+          message.channel.send({files: [{attachment: Buffer.from(results.errors, 'utf8'), name: 'stderr.txt'}]})
+        }
       }
     });
   }
