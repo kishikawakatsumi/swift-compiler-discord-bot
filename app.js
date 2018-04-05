@@ -12,7 +12,17 @@ client.on("message", (message) => {
     return
   }
 
-  const availableVersions = ['2018-03-31-a', '4.1', '4.0.3', '3.1.1', '3.0.2']
+  const availableVersions = ['2018-04-04-a',
+                             '2018-04-03-a',
+                             '2018-04-02-a',
+                             '2018-04-01-a',
+                             '2018-03-31-a',
+                             '4.1',
+                             '4.0.3',
+                             '3.1.1',
+                             '3.0.2'];
+  const latestVersion = availableVersions[0];
+  const stableVersion = '4.1';
 
   const command = message.content.replace(new RegExp('<@' + client.user.id + '>', 'g'), '').trim();
   if (command == 'help' || command == '') {
@@ -23,18 +33,18 @@ Usage:
   \`​\`​\`
   [Swift Code]
   \`​\`​\`
-  
+
 Examples:
   @swiftbot
   \`​\`​\`
   print("Hello world!")
   \`​\`​\`
-  
+
   @swiftbot --version=4.0.3
   \`​\`​\`
   print("Hello world!")
   \`​\`​\`
-  
+
   @swiftbot --command=swiftc --options=-dump-parse
   \`​\`​\`
   print("Hello world!")
@@ -76,6 +86,11 @@ ${availableVersions.join('\n')}
 
     const defaultVersion = '4.1';
     let version = parsedArguments.version || defaultVersion;
+    if (version == 'latest') {
+      version = latestVersion
+    } else if (version == 'stable') {
+      version = stableVersion
+    }
     if (!availableVersions.includes(version.toString())) {
       message.channel.send(`Swift '${version}' toolchain is not supported.`);
       return;
