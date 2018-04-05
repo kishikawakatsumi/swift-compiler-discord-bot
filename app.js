@@ -126,16 +126,18 @@ ${availableVersions.join('\n')}
       const maxLength = 1950;
       const results = JSON.parse(body);
 
-      const versionLines = results.version.split('\n')
-      let versionString = results.version
-      if (versionLines.length > 0) {
-        versionString = versionLines[0]
-      }
-      message.channel.send(`
+      if (results.version) {
+        const versionLines = results.version.split('\n')
+        let versionString = results.version
+        if (versionLines.length > 0) {
+          versionString = versionLines[0]
+        }
+        message.channel.send(`
 \`\`\`
 ${versionString}
 \`\`\`
-        `.trim());
+          `.trim());
+      }
 
       if (results.output) {
         if (results.output.length <= maxLength) {
