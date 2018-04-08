@@ -103,7 +103,7 @@ ${availableVersions.join('\n')}
       return;
     }
 
-    const options = parsedArguments.options || '';
+    let options = parsedArguments.options || '';
     if (options.length == 0 && command == defaultCommand && version == stableVersion) {
       options = '-I /usr/lib/swift/clang/include/ -I /vendor/SwiftyMath/.build/release/ -I /vendor/swift-package-libbsd/ -L /vendor/SwiftyMath/.build/release/ -ldSwiftyMath'
     }
