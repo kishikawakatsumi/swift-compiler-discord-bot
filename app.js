@@ -104,6 +104,9 @@ ${availableVersions.join('\n')}
     }
 
     const options = parsedArguments.options || '';
+    if (options.length == 0 && command == defaultCommand && version == stableVersion) {
+      options = '-I /usr/lib/swift/clang/include/ -I /vendor/SwiftyMath/.build/release/ -I /vendor/swift-package-libbsd/ -L /vendor/SwiftyMath/.build/release/ -ldSwiftyMath'
+    }
 
     const defaultTimeout = 30;
     let timeout = parsedArguments.timeout || defaultTimeout;
