@@ -105,7 +105,7 @@ ${availableVersions.join('\n')}
 
     let options = parsedArguments.options || '';
     const commandInjectionOperators = [';', '&', '&&', '||', '`', '(', ')', '#'];
-    if (operators.some(operator => options.includes(operator))) {
+    if (commandInjectionOperators.some(operator => options.includes(operator))) {
       message.channel.send('Invalid control characters found');
       return;
     }
