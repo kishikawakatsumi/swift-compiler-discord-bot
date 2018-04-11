@@ -87,9 +87,9 @@ ${availableVersions.join('\n')}
     const defaultVersion = '4.1';
     let version = parsedArguments.version || defaultVersion;
     if (version == 'latest') {
-      version = latestVersion
+      version = latestVersion;
     } else if (version == 'stable') {
-      version = stableVersion
+      version = stableVersion;
     }
     if (!availableVersions.includes(version.toString())) {
       message.channel.send(`Swift '${version}' toolchain is not supported.`);
@@ -104,8 +104,13 @@ ${availableVersions.join('\n')}
     }
 
     let options = parsedArguments.options || '';
+    const commandInjectionOperators = [';', '&', '&&', '||', '`', '(', ')', '#'];
+    if (operators.some(operator => options.includes(operator))) {
+      message.channel.send('Invalid control characters found');
+      return;
+    }
     if (options.length == 0 && command == defaultCommand && version == stableVersion) {
-      options = '-I /usr/lib/swift/clang/include/ -I /vendor/SwiftyMath/.build/release/ -I /vendor/swift-package-libbsd/ -L /vendor/SwiftyMath/.build/release/ -ldSwiftyMath'
+      options = '-I /usr/lib/swift/clang/include/ -I /vendor/SwiftyMath/.build/release/ -I /vendor/swift-package-libbsd/ -L /vendor/SwiftyMath/.build/release/ -ldSwiftyMath';
     }
 
     const defaultTimeout = 30;
