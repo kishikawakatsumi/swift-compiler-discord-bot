@@ -92,21 +92,21 @@ ${availableVersions.join('\n')}
       version = stableVersion;
     }
     if (!availableVersions.includes(version.toString())) {
-      message.channel.send(`Swift '${version}' toolchain is not supported.`);
+      message.channel.send(`⚠️ Swift '${version}' toolchain is not supported.`);
       return;
     }
 
     const defaultCommand = 'swift';
     let command = parsedArguments.command || defaultCommand;
     if (!['swift', 'swiftc'].includes(command)) {
-      message.channel.send(`Command '${command}' is not supported.`);
+      message.channel.send(`⚠️ Command '${command}' is not supported.`);
       return;
     }
 
     let options = parsedArguments.options || '';
     const commandInjectionOperators = [';', '&', '&&', '||', '`', '(', ')', '#'];
     if (commandInjectionOperators.some(operator => options.includes(operator))) {
-      message.channel.send('Invalid control characters found');
+      message.channel.send('⚠️ Invalid control characters found.');
       return;
     }
     if (options.length == 0 && command == defaultCommand && version == stableVersion) {
