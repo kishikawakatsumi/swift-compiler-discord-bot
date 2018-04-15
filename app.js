@@ -13,14 +13,7 @@ client.on("message", (message) => {
     return
   }
 
-  const availableVersions = ['2018-04-10-a',
-                             '2018-04-08-a',
-                             '2018-04-06-a',
-                             '2018-04-04-a',
-                             '2018-04-03-a',
-                             '2018-04-02-a',
-                             '2018-04-01-a',
-                             '2018-03-31-a',
+  const availableVersions = ['2018-04-13-a',
                              '4.1',
                              '4.0.3',
                              '3.1.1',
