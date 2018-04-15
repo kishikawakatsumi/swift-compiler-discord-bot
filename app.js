@@ -27,34 +27,25 @@ client.on("message", (message) => {
     return;
   }
   if (command == 'versions') {
-    message.channel.send(`
-Available Swift versions:
-\`\`\`
-${availableVersions.join('\n')}
-\`\`\`
-      `.trim());
+    showVersions(message)
     return;
   }
   if (command == 'contribute') {
-    message.channel.send('https://github.com/kishikawakatsumi/swift-playground');
-    message.channel.send('https://github.com/kishikawakatsumi/swift-compiler-discord-bot');
+    showContribute(message)
     return;
   }
 
   const regex = /```[a-zA-Z]*\n([\s\S]*?\n)```/;
   const match = regex.exec(message.content);
-
   if (!match) {
     return
   }
 
   const code = match[1];
-
   const args = message.content.split('\n');
   let parsedArguments = {};
   if (args.length > 0) {
     parsedArguments = require('yargs-parser')(args[0]);
-    console.log(parsedArguments);
   }
 
   const defaultVersion = '4.1';
@@ -108,58 +99,15 @@ ${availableVersions.join('\n')}
     const results = JSON.parse(body);
 
     if (results.version) {
-      const versionLines = results.version.split('\n')
-      let versionString = results.version
-      if (versionLines.length > 0) {
-        versionString = versionLines[0]
-      }
-      message.channel.send(`
-\`\`\`
-${versionString}
-\`\`\`
-        `.trim());
+      sendVersion(message, results.version)
     }
 
     if (results.output) {
-      if (results.output.length <= maxLength) {
-        message.channel.send(`
-\`\`\`
-${results.output}
-\`\`\`
-          `.trim());
-      } else {
-        const messages = Util.splitMessage(results.output);
-        if (Array.isArray(messages) && messages.length > 0) {
-          message.channel.send(`
-\`\`\`
-${messages[0]}
-...
-\`\`\`
-            `.trim());
-        }
-        message.channel.send({files: [{attachment: Buffer.from(results.output, 'utf8'), name: 'stdout.txt'}]})
-      }
+      sendStdout(message, results.output)
     }
 
     if (results.errors) {
-      if (results.errors.length <= maxLength) {
-        message.channel.send(`
-\`\`\`
-${results.errors}
-\`\`\`
-          `.trim());
-      } else {
-        const messages = Util.splitMessage(results.errors);
-        if (Array.isArray(messages) && messages.length > 0) {
-          message.channel.send(`
-\`\`\`
-${messages[0]}
-...
-\`\`\`
-            `.trim());
-        }
-        message.channel.send({files: [{attachment: Buffer.from(results.errors, 'utf8'), name: 'stderr.txt'}]})
-      }
+      sendStderr(message, results.errors)
     }
   });
 });
@@ -197,4 +145,73 @@ Subcommands:
   @swiftbot help: show help
 \`\`\`
     `.trim());
+}
+
+function showVersions(message) {
+  message.channel.send(`
+Available Swift versions:
+\`\`\`
+${availableVersions.join('\n')}
+\`\`\`
+    `.trim());
+}
+
+function showContribute(message) {
+  message.channel.send('https://github.com/kishikawakatsumi/swift-playground');
+  message.channel.send('https://github.com/kishikawakatsumi/swift-compiler-discord-bot');
+}
+
+function sendVersion(message, version) {
+  const versionLines = version.split('\n')
+  let versionString = version
+  if (versionLines.length > 0) {
+    versionString = versionLines[0]
+  }
+  message.channel.send(`
+\`\`\`
+${versionString}
+\`\`\`
+    `.trim());
+}
+
+function sendStdout(message, output) {
+  if (output.length <= maxLength) {
+    message.channel.send(`
+\`\`\`
+${output}
+\`\`\`
+      `.trim());
+  } else {
+    const messages = Util.splitMessage(output);
+    if (Array.isArray(messages) && messages.length > 0) {
+      message.channel.send(`
+\`\`\`
+${messages[0]}
+...
+\`\`\`
+        `.trim());
+    }
+    message.channel.send({files: [{attachment: Buffer.from(output, 'utf8'), name: 'stdout.txt'}]})
+  }
+}
+
+function sendStderr(message, errors) {
+  if (errors.length <= maxLength) {
+    message.channel.send(`
+\`\`\`
+${errors}
+\`\`\`
+      `.trim());
+} else {
+  const messages = Util.splitMessage(errors);
+  if (Array.isArray(messages) && messages.length > 0) {
+    message.channel.send(`
+\`\`\`
+${messages[0]}
+...
+\`\`\`
+        `.trim());
+    }
+    message.channel.send({files: [{attachment: Buffer.from(errors, 'utf8'), name: 'stderr.txt'}]})
+  }
 }
