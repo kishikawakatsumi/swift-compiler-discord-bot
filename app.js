@@ -4,6 +4,15 @@ const { Client, MessageAttachment, Util } = require('discord.js');
 const client = new Client();
 const config = require("./config.json");
 
+const availableVersions = ['2018-04-13-a',
+                           '4.1',
+                           '4.0.3',
+                           '3.1.1',
+                           '3.0.2'];
+const latestVersion = availableVersions[0];
+const stableVersion = '4.1';
+const maxLength = 1950;
+
 client.on("ready", () => {
   console.log("Swift compiler bot is ready!");
 });
@@ -12,14 +21,6 @@ client.on("message", (message) => {
   if (!message.isMentioned(client.user) || message.author.bot) {
     return
   }
-
-  const availableVersions = ['2018-04-13-a',
-                             '4.1',
-                             '4.0.3',
-                             '3.1.1',
-                             '3.0.2'];
-  const latestVersion = availableVersions[0];
-  const stableVersion = '4.1';
 
   const command = message.content.replace(new RegExp('<@' + client.user.id + '>', 'g'), '').trim();
   if (command == 'help' || command == '') {
@@ -50,15 +51,7 @@ client.on("message", (message) => {
 
   const defaultVersion = '4.1';
   let version = parsedArguments.version || defaultVersion;
-  if (version == 'latest') {
-    version = latestVersion;
-  } else if (version == 'stable') {
-    version = stableVersion;
-  }
-  if (!availableVersions.includes(version.toString())) {
-    message.channel.send(`⚠️ Swift '${version}' toolchain is not supported.`);
-    return;
-  }
+  let versions = parseVersionArgument(version)
 
   const defaultCommand = 'swift';
   let swiftCommand = parsedArguments.command || defaultCommand;
@@ -87,28 +80,12 @@ client.on("message", (message) => {
     timeout = maxTimeout;
   }
 
-  const request = require("request");
-  request.post({
-    url: "https://swift-playground.kishikawakatsumi.com/run",
-    headers: {
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify({code: code, toolchain_version: version, command: swiftCommand, options: options, timeout: timeout})
-  }, function (error, response, body) {
-    const maxLength = 1950;
-    const results = JSON.parse(body);
-
-    if (results.version) {
-      sendVersion(message, results.version)
+  versions.forEach(function(version) {
+    if (!availableVersions.includes(version.toString())) {
+      message.channel.send(`⚠️ Swift '${version}' toolchain is not supported.`);
+      return;
     }
-
-    if (results.output) {
-      sendStdout(message, results.output)
-    }
-
-    if (results.errors) {
-      sendStderr(message, results.errors)
-    }
+    post(message, code, version, swiftCommand, options, timeout);
   });
 });
 
@@ -159,6 +136,51 @@ ${availableVersions.join('\n')}
 function showContribute(message) {
   message.channel.send('https://github.com/kishikawakatsumi/swift-playground');
   message.channel.send('https://github.com/kishikawakatsumi/swift-compiler-discord-bot');
+}
+
+function parseVersionArgument(argument) {
+  let versions = []
+  if (Array.isArray(argument)) {
+    versions = argument.map(function(element) {
+      return parseVersionArgument(element);
+    });
+  } else {
+    argument = argument.toString().trim()
+    if (argument.includes(',')) {
+      versions = parseVersionArgument(argument.split(','))
+    } else {
+      if (argument == 'latest') {
+        versions.push(latestVersion);
+      } else if (argument == 'stable') {
+        versions.push(stableVersion);
+      } else {
+        versions.push(argument);
+      }
+    }
+  }
+  return Array.prototype.concat.apply([], versions);
+}
+
+function post(message, code, version, command, options, timeout) {
+  const request = require("sync-request");
+
+  var res = request('POST', 'https://swift-playground.kishikawakatsumi.com/run', {
+    headers: {
+      'content-type': 'application/json'
+    },
+    json: {code: code, toolchain_version: version, command: command, options: options, timeout: timeout},
+  });
+
+  const results = JSON.parse(res.getBody());
+  if (results.version) {
+    sendVersion(message, results.version)
+  }
+  if (results.output) {
+    sendStdout(message, results.output)
+  }
+  if (results.errors) {
+    sendStderr(message, results.errors)
+  }
 }
 
 function sendVersion(message, version) {
