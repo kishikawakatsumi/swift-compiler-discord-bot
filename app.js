@@ -2,6 +2,7 @@
 
 const { Client, MessageAttachment, Util } = require('discord.js');
 const client = new Client();
+const config = require("./config.json");
 
 client.on("ready", () => {
   console.log("Swift compiler bot is ready!");
@@ -195,4 +196,4 @@ ${messages[0]}
   }
 });
 
-client.login("NDI5OTEzOTAyMzQwNjM2Njc1.DaIkLg.7cx7BO6-kmz4wHOyaqV2D_nQBvQ");
+client.login(config.token);
