@@ -23,36 +23,7 @@ client.on("message", (message) => {
 
   const command = message.content.replace(new RegExp('<@' + client.user.id + '>', 'g'), '').trim();
   if (command == 'help' || command == '') {
-    message.channel.send(`
-\`\`\`
-Usage:
-  @swiftbot [--version=SWIFT_VERSION] [--command={swift, swiftc}] [--options=SWIFTC_OPTIONS]
-  \`​\`​\`
-  [Swift Code]
-  \`​\`​\`
-
-Examples:
-  @swiftbot
-  \`​\`​\`
-  print("Hello world!")
-  \`​\`​\`
-
-  @swiftbot --version=4.0.3
-  \`​\`​\`
-  print("Hello world!")
-  \`​\`​\`
-
-  @swiftbot --command=swiftc --options=-dump-parse
-  \`​\`​\`
-  print("Hello world!")
-  \`​\`​\`
-
-Subcommands:
-  @swiftbot versions: show available Swift toolchain versions
-  @swiftbot contribute: show repository URLs
-  @swiftbot help: show help
-\`\`\`
-      `.trim());
+    showHelp(message)
     return;
   }
   if (command == 'versions') {
@@ -194,3 +165,36 @@ ${messages[0]}
 });
 
 client.login(config.token);
+
+function showHelp(message) {
+  message.channel.send(`
+\`\`\`
+Usage:
+  @swiftbot [--version=SWIFT_VERSION] [--command={swift, swiftc}] [--options=SWIFTC_OPTIONS]
+  \`​\`​\`
+  [Swift Code]
+  \`​\`​\`
+
+Examples:
+  @swiftbot
+  \`​\`​\`
+  print("Hello world!")
+  \`​\`​\`
+
+  @swiftbot --version=4.0.3
+  \`​\`​\`
+  print("Hello world!")
+  \`​\`​\`
+
+  @swiftbot --command=swiftc --options=-dump-parse
+  \`​\`​\`
+  print("Hello world!")
+  \`​\`​\`
+
+Subcommands:
+  @swiftbot versions: show available Swift toolchain versions
+  @swiftbot contribute: show repository URLs
+  @swiftbot help: show help
+\`\`\`
+    `.trim());
+}
