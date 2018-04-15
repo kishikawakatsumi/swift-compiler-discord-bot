@@ -83,6 +83,7 @@ ${availableVersions.join('\n')}
   let parsedArguments = {};
   if (args.length > 0) {
     parsedArguments = require('yargs-parser')(args[0]);
+    console.log(parsedArguments);
   }
 
   const defaultVersion = '4.1';
@@ -98,9 +99,9 @@ ${availableVersions.join('\n')}
   }
 
   const defaultCommand = 'swift';
-  let command = parsedArguments.command || defaultCommand;
-  if (!['swift', 'swiftc'].includes(command)) {
-    message.channel.send(`⚠️ Command '${command}' is not supported.`);
+  let swiftCommand = parsedArguments.command || defaultCommand;
+  if (!['swift', 'swiftc'].includes(swiftCommand)) {
+    message.channel.send(`⚠️ Command '${swiftCommand}' is not supported.`);
     return;
   }
 
@@ -110,7 +111,7 @@ ${availableVersions.join('\n')}
     message.channel.send('⚠️ Invalid control characters found.');
     return;
   }
-  if (options.length == 0 && command == defaultCommand && version == stableVersion) {
+  if (options.length == 0 && swiftCommand == defaultCommand && version == stableVersion) {
     options = '-I /usr/lib/swift/clang/include/ -I /vendor/SwiftyMath/.build/release/ -I /vendor/swift-package-libbsd/ -L /vendor/SwiftyMath/.build/release/ -ldSwiftyMath';
   }
 
@@ -130,7 +131,7 @@ ${availableVersions.join('\n')}
     headers: {
       'content-type': 'application/json'
     },
-    body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
+    body: JSON.stringify({code: code, toolchain_version: version, command: swiftCommand, options: options, timeout: timeout})
   }, function (error, response, body) {
     const maxLength = 1950;
     const results = JSON.parse(body);
