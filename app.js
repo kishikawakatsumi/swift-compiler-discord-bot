@@ -72,121 +72,124 @@ ${availableVersions.join('\n')}
 
   const regex = /```[a-zA-Z]*\n([\s\S]*?\n)```/;
   const match = regex.exec(message.content);
-  if (match) {
-    const code = match[1];
 
-    const args = message.content.split('\n');
-    let parsedArguments = {};
-    if (args.length > 0) {
-      parsedArguments = require('yargs-parser')(args[0]);
-    }
+  if (!match) {
+    return
+  }
 
-    const defaultVersion = '4.1';
-    let version = parsedArguments.version || defaultVersion;
-    if (version == 'latest') {
-      version = latestVersion;
-    } else if (version == 'stable') {
-      version = stableVersion;
-    }
-    if (!availableVersions.includes(version.toString())) {
-      message.channel.send(`⚠️ Swift '${version}' toolchain is not supported.`);
-      return;
-    }
+  const code = match[1];
 
-    const defaultCommand = 'swift';
-    let command = parsedArguments.command || defaultCommand;
-    if (!['swift', 'swiftc'].includes(command)) {
-      message.channel.send(`⚠️ Command '${command}' is not supported.`);
-      return;
-    }
+  const args = message.content.split('\n');
+  let parsedArguments = {};
+  if (args.length > 0) {
+    parsedArguments = require('yargs-parser')(args[0]);
+  }
 
-    let options = parsedArguments.options || '';
-    const commandInjectionOperators = [';', '&', '&&', '||', '`', '(', ')', '#'];
-    if (commandInjectionOperators.some(operator => options.includes(operator))) {
-      message.channel.send('⚠️ Invalid control characters found.');
-      return;
-    }
-    if (options.length == 0 && command == defaultCommand && version == stableVersion) {
-      options = '-I /usr/lib/swift/clang/include/ -I /vendor/SwiftyMath/.build/release/ -I /vendor/swift-package-libbsd/ -L /vendor/SwiftyMath/.build/release/ -ldSwiftyMath';
-    }
+  const defaultVersion = '4.1';
+  let version = parsedArguments.version || defaultVersion;
+  if (version == 'latest') {
+    version = latestVersion;
+  } else if (version == 'stable') {
+    version = stableVersion;
+  }
+  if (!availableVersions.includes(version.toString())) {
+    message.channel.send(`⚠️ Swift '${version}' toolchain is not supported.`);
+    return;
+  }
 
-    const defaultTimeout = 30;
-    let timeout = parsedArguments.timeout || defaultTimeout;
-    timeout = parseInt(timeout);
-    const maxTimeout = 600;
-    if (isNaN(timeout)) {
-      timeout = defaultTimeout;
-    } else if (timeout > maxTimeout) {
-      timeout = maxTimeout;
-    }
+  const defaultCommand = 'swift';
+  let command = parsedArguments.command || defaultCommand;
+  if (!['swift', 'swiftc'].includes(command)) {
+    message.channel.send(`⚠️ Command '${command}' is not supported.`);
+    return;
+  }
 
-    const request = require("request");
-    request.post({
-      url: "https://swift-playground.kishikawakatsumi.com/run",
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
-    }, function (error, response, body) {
-      const maxLength = 1950;
-      const results = JSON.parse(body);
+  let options = parsedArguments.options || '';
+  const commandInjectionOperators = [';', '&', '&&', '||', '`', '(', ')', '#'];
+  if (commandInjectionOperators.some(operator => options.includes(operator))) {
+    message.channel.send('⚠️ Invalid control characters found.');
+    return;
+  }
+  if (options.length == 0 && command == defaultCommand && version == stableVersion) {
+    options = '-I /usr/lib/swift/clang/include/ -I /vendor/SwiftyMath/.build/release/ -I /vendor/swift-package-libbsd/ -L /vendor/SwiftyMath/.build/release/ -ldSwiftyMath';
+  }
 
-      if (results.version) {
-        const versionLines = results.version.split('\n')
-        let versionString = results.version
-        if (versionLines.length > 0) {
-          versionString = versionLines[0]
-        }
-        message.channel.send(`
+  const defaultTimeout = 30;
+  let timeout = parsedArguments.timeout || defaultTimeout;
+  timeout = parseInt(timeout);
+  const maxTimeout = 600;
+  if (isNaN(timeout)) {
+    timeout = defaultTimeout;
+  } else if (timeout > maxTimeout) {
+    timeout = maxTimeout;
+  }
+
+  const request = require("request");
+  request.post({
+    url: "https://swift-playground.kishikawakatsumi.com/run",
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({code: code, toolchain_version: version, command: command, options: options, timeout: timeout})
+  }, function (error, response, body) {
+    const maxLength = 1950;
+    const results = JSON.parse(body);
+
+    if (results.version) {
+      const versionLines = results.version.split('\n')
+      let versionString = results.version
+      if (versionLines.length > 0) {
+        versionString = versionLines[0]
+      }
+      message.channel.send(`
 \`\`\`
 ${versionString}
 \`\`\`
-          `.trim());
-      }
+        `.trim());
+    }
 
-      if (results.output) {
-        if (results.output.length <= maxLength) {
-          message.channel.send(`
+    if (results.output) {
+      if (results.output.length <= maxLength) {
+        message.channel.send(`
 \`\`\`
 ${results.output}
 \`\`\`
-            `.trim());
-        } else {
-          const messages = Util.splitMessage(results.output);
-          if (Array.isArray(messages) && messages.length > 0) {
-            message.channel.send(`
+          `.trim());
+      } else {
+        const messages = Util.splitMessage(results.output);
+        if (Array.isArray(messages) && messages.length > 0) {
+          message.channel.send(`
 \`\`\`
 ${messages[0]}
 ...
 \`\`\`
-              `.trim());
-          }
-          message.channel.send({files: [{attachment: Buffer.from(results.output, 'utf8'), name: 'stdout.txt'}]})
+            `.trim());
         }
+        message.channel.send({files: [{attachment: Buffer.from(results.output, 'utf8'), name: 'stdout.txt'}]})
       }
+    }
 
-      if (results.errors) {
-        if (results.errors.length <= maxLength) {
-          message.channel.send(`
+    if (results.errors) {
+      if (results.errors.length <= maxLength) {
+        message.channel.send(`
 \`\`\`
 ${results.errors}
 \`\`\`
-            `.trim());
-        } else {
-          const messages = Util.splitMessage(results.errors);
-          if (Array.isArray(messages) && messages.length > 0) {
-            message.channel.send(`
+          `.trim());
+      } else {
+        const messages = Util.splitMessage(results.errors);
+        if (Array.isArray(messages) && messages.length > 0) {
+          message.channel.send(`
 \`\`\`
 ${messages[0]}
 ...
 \`\`\`
-              `.trim());
-          }
-          message.channel.send({files: [{attachment: Buffer.from(results.errors, 'utf8'), name: 'stderr.txt'}]})
+            `.trim());
         }
+        message.channel.send({files: [{attachment: Buffer.from(results.errors, 'utf8'), name: 'stderr.txt'}]})
       }
-    });
-  }
+    }
+  });
 });
 
 client.login(config.token);
