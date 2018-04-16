@@ -4,11 +4,15 @@ const { Client, MessageAttachment, Util } = require('discord.js');
 const client = new Client();
 const config = require("./config.json");
 
-const availableVersions = ['2018-04-13-a',
+const availableVersions = ['2018-04-15-a',
                            '4.1',
                            '4.0.3',
+                           '4.0.2',
+                           '4.0',
                            '3.1.1',
-                           '3.0.2'];
+                           '3.1',
+                           '3.0.2',
+                           '3.0.1'];
 const latestVersion = availableVersions[0];
 const stableVersion = '4.1';
 const maxLength = 1950;
@@ -22,7 +26,7 @@ client.on("message", (message) => {
     return
   }
 
-  const command = message.content.replace(new RegExp('<@' + client.user.id + '>', 'g'), '').trim();
+  const command = message.cleanContent.replace(/@swiftbot/g, '').trim();
   if (command == 'help' || command == '') {
     showHelp(message)
     return;
