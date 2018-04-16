@@ -167,23 +167,29 @@ function parseVersionArgument(argument) {
 
 function post(message, code, version, command, options, timeout) {
   const request = require("sync-request");
-
-  var res = request('POST', 'https://swift-playground.kishikawakatsumi.com/run', {
+  const res = request('POST', 'https://swift-playground.kishikawakatsumi.com/run', {
     headers: {
       'content-type': 'application/json'
     },
     json: {code: code, toolchain_version: version, command: command, options: options, timeout: timeout},
   });
 
-  const results = JSON.parse(res.getBody());
-  if (results.version) {
-    sendVersion(message, results.version)
+  if (res.statusCode != 200) {
+    message.channel.send(`❗️ Server error: ${res.statusCode}`);
   }
-  if (results.output) {
-    sendStdout(message, results.output)
-  }
-  if (results.errors) {
-    sendStderr(message, results.errors)
+  try {
+    const results = JSON.parse(res.body);
+    if (results.version) {
+      sendVersion(message, results.version)
+    }
+    if (results.output) {
+      sendStdout(message, results.output)
+    }
+    if (results.errors) {
+      sendStderr(message, results.errors)
+    }
+  } catch (e) {
+    message.channel.send(`❗️ Invalid JSON returned.`);
   }
 }
 
