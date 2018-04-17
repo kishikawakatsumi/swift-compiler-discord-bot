@@ -180,7 +180,11 @@ function post(message, code, version, command, options, timeout) {
   try {
     const results = JSON.parse(res.body);
     if (results.version) {
-      sendVersion(message, results.version)
+      if (version == latestVersion) {
+        sendVersion(message, results.version, `swift-DEVELOPMENT-SNAPSHOT-${latestVersion}`)
+      } else {
+        sendVersion(message, results.version)
+      }
     }
     if (results.output) {
       sendStdout(message, results.output)
@@ -193,17 +197,26 @@ function post(message, code, version, command, options, timeout) {
   }
 }
 
-function sendVersion(message, version) {
+function sendVersion(message, version, snapshotVersion) {
   const versionLines = version.split('\n')
   let versionString = version
   if (versionLines.length > 0) {
     versionString = versionLines[0]
   }
-  message.channel.send(`
+  if (snapshotVersion) {
+    message.channel.send(`
+\`\`\`
+${snapshotVersion}
+${versionString}
+\`\`\`
+      `.trim());
+  } else {
+    message.channel.send(`
 \`\`\`
 ${versionString}
 \`\`\`
-    `.trim());
+      `.trim());
+  }
 }
 
 function sendStdout(message, output) {
