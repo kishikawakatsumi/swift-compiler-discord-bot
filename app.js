@@ -4,7 +4,7 @@ const { Client, MessageAttachment, Util } = require('discord.js');
 const client = new Client();
 const config = require("./config.json");
 
-const availableVersions = ['2018-04-15-a',
+const availableVersions = ['2018-04-16-a',
                            '4.1',
                            '4.0.3',
                            '4.0.2',
