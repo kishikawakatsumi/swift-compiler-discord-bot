@@ -263,6 +263,13 @@ function post(message, code, version, command, options, timeout, updateMessages)
         resultMessages[message.id]['_stderrAttachment'] = null;
       }
     }
+
+    message.react('🛠')
+      .then(reaction => {
+        const filter = (reaction, user) => reaction.emoji.name === '🛠' && user.id !== client.user.id;
+        const collector = message.createReactionCollector(filter);
+        collector.on('collect', r => post(message, code, latestVersion, command, options, timeout, {}));
+      });
   } catch (e) {
     console.log(e);
     message.channel.send(`❗️Invalid JSON returned.`)
