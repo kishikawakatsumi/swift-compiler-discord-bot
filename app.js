@@ -266,7 +266,7 @@ function post(message, code, version, command, options, timeout, updateMessages)
 
     message.react('🛠')
       .then(reaction => {
-        const filter = (reaction, user) => reaction.emoji.name === '🛠' && user.id !== client.user.id;
+        const filter = (reaction, user) => reaction.emoji.name === '🛠' && user.id === message.author.id && user.id !== client.user.id;
         const collector = message.createReactionCollector(filter);
         collector.on('collect', r => post(message, code, latestVersion, command, options, timeout, {}));
       });
