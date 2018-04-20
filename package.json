@@ -10,8 +10,16 @@
   "author": "Katsumi Kishikawa",
   "license": "MIT",
   "dependencies": {
+    "bufferutil": "^3.0.4",
     "discord.js": "^11.3.2",
-    "sync-request": "^6.0.0",
+    "erlpack": "github:discordapp/erlpack",
+    "libsodium-wrappers": "^0.7.3",
+    "node-opus": "^0.2.7",
+    "opusscript": "0.0.6",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2",
+    "sodium": "^2.0.3",
+    "uws": "^9.148.0",
     "yargs-parser": "^9.0.2"
   }
 }
