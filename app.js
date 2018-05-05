@@ -170,7 +170,8 @@ function processMessage(message) {
       }
 
       const command = `docker build --no-cache=true --rm=true --tag=kishikawakatsumi/swift:${version} . --build-arg SWIFT_BRANCH=${branch} --build-arg SWIFT_VERSION=${tag}`
-      execCommand(command, message);
+      // execCommand(command, message);
+      console.log(command);
 
       return new Promise((resolve, reject) => { resolve(); });
     }
