@@ -175,7 +175,7 @@ function processMessage(message) {
       if (version.length == 1) {
         version = parseInt(version).toFixed(1).toString();
       }
-      return post(message, code, version, command, options, timeout);
+      return run(code, version, command, options, timeout);
     })
   ).then(results => {
     const embed = new RichEmbed();
@@ -206,7 +206,7 @@ function processMessage(message) {
   });
 }
 
-function post(message, code, version, command, options, timeout) {
+function run(code, version, command, options, timeout) {
   const request = require('request-promise');
   return request({
     method: 'POST',
@@ -237,7 +237,7 @@ function post(message, code, version, command, options, timeout) {
         if (Array.isArray(splitMessage) && splitMessage.length > 0) {
           embedContents['stdout'] = {};
           embedContents.stdout['text'] = `${splitMessage[0]}\n...`.toCodeBlock();
-          embedContents.stdout['file'] = new Attachment(Buffer.from(results.output, 'utf8'), 'stdout.txt');
+          embedContents.stdout['file'] = new Attachment(Buffer.from(results.output, 'utf8'), `stdout-${version}.txt`);
         }
       }
     } else {
@@ -251,7 +251,7 @@ function post(message, code, version, command, options, timeout) {
         if (Array.isArray(splitMessage) && splitMessage.length > 0) {
           embedContents['stderr'] = {};
           embedContents.stderr['text'] = `${splitMessage[0]}\n...`.toCodeBlock();
-          embedContents.stderr['file'] = new Attachment(Buffer.from(results.errors, 'utf8'), 'stderr.txt');
+          embedContents.stderr['file'] = new Attachment(Buffer.from(results.errors, 'utf8'), `stderr-${version}.txt`);
         }
       }
     } else {
