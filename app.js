@@ -1,14 +1,14 @@
 'use strict';
 
-const { Client, RichEmbed, Util, Constants } = require('discord.js');
+const { Client, RichEmbed, Attachment, Util, Constants } = require('discord.js');
 const client = new Client();
 
 const config = require("./config.json");
 const maxLength = 1000;
 
-String.prototype.toCodeBlock = function() {
+String.prototype.toCodeBlock = function(format) {
   return `
-\`\`\`
+\`\`\`${format}
 ${this.trim()}
 \`\`\`
     `.trim();
@@ -181,24 +181,24 @@ function processMessage(message) {
     const embed = new RichEmbed();
 
     embed.setAuthor(message.author.username, message.author.avatarURL);
-    embed.setDescription(code.toCodeBlock())
+    embed.setDescription(code.toCodeBlock('swift'))
     embed.setTimestamp(new Date());
 
     results.forEach(result => {
       if (result.version) {
-        embed.addField('Version', result.version);
+        embed.addField('Version:', result.version);
       }
       if (result.stdout && result.stdout.text) {
-        embed.addField('Output', result.stdout.text);
+        embed.addField('Output:', result.stdout.text);
       }
       if (result.stdout && result.stdout.file) {
-        // embed.attachFile(result.stdout.file);
+        message.channel.send(result.stdout.file);
       }
       if (result.stderr && result.stderr.text) {
-        embed.addField('Error', result.stderr.text);
+        embed.addField('Error:', result.stderr.text);
       }
       if (result.stderr && result.stderr.file) {
-        // embed.attachFile(result.stderr.file);
+        message.channel.send(result.stderr.file);
       }
     });
 
@@ -225,7 +225,9 @@ function post(message, code, version, command, options, timeout) {
     if (results.version) {
       embedContents['version'] = formatVersion(results.version).toCodeBlock();
     } else {
-      embedContents['version'] = version.toCodeBlock();
+      embedContents['version'] = `⚠️ ${version}`.toCodeBlock();
+      embedContents['stderr'] = {text: results.errors.toCodeBlock()};
+      return embedContents;
     }
     if (results.output) {
       if (results.output.length <= maxLength) {
@@ -233,9 +235,10 @@ function post(message, code, version, command, options, timeout) {
       } else {
         const splitMessage = Util.splitMessage(results.output, {maxLength: maxLength});
         if (Array.isArray(splitMessage) && splitMessage.length > 0) {
-          embedContents['stdout'] = {text: `${splitMessage[0]}\n...`.toCodeBlock()};
+          embedContents['stdout'] = {};
+          embedContents.stdout['text'] = `${splitMessage[0]}\n...`.toCodeBlock();
+          embedContents.stdout['file'] = new Attachment(Buffer.from(results.output, 'utf8'), 'stdout.txt');
         }
-        // embedContents['stdout'] = {file: {attachment: Buffer.from(results.output, 'utf8'), name: 'stdout.txt'}};
       }
     } else {
       embedContents['stdout'] = {text: ''.toCodeBlock()};
@@ -246,9 +249,10 @@ function post(message, code, version, command, options, timeout) {
       } else {
         const splitMessage = Util.splitMessage(results.errors, {maxLength: maxLength});
         if (Array.isArray(splitMessage) && splitMessage.length > 0) {
-          embedContents['stderr'] = {text: `${splitMessage[0]}\n...`.toCodeBlock()};
+          embedContents['stderr'] = {};
+          embedContents.stderr['text'] = `${splitMessage[0]}\n...`.toCodeBlock();
+          embedContents.stderr['file'] = new Attachment(Buffer.from(results.errors, 'utf8'), 'stderr.txt');
         }
-        // embedContents['stderr'] = {file: {attachment: Buffer.from(results.errors, 'utf8'), name: 'stderr.txt'}};
       }
     } else {
       embedContents['stderr'] = {text: ''.toCodeBlock()};
