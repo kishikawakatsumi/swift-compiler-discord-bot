@@ -199,11 +199,9 @@ function processMessage(message) {
   let options = args.options || '';
   if (options.length == 0 && command == defaultCommand && version == stableVersion) {
     options = [
-      '-I /usr/lib/swift/clang/include/',
-      '-I /vendor/SwiftyMath/.build/release/',
-      '-I /vendor/swift-package-libbsd/',
-      '-L /vendor/SwiftyMath/.build/release/',
-      '-ldSwiftyMath'
+      '-I /Libraries/All/.build/release',
+      '-L /Libraries/All/.build/release',
+      '-lAll'
     ].join(' ');
   }
 
