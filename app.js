@@ -106,6 +106,11 @@ function processMessage(message) {
     });
   } else if (subcommand == 'contribute') {
     const embed = new RichEmbed();
+    embed.setAuthor(
+      'Kishikawa Katsumi',
+      'https://cdn.discordapp.com/avatars/291075091025100810/39d60f97ea2bca395f1992c42f25107c.png',
+      'https://kishikawakatsumi.com'
+    );
     embed.setTitle('Contributions Welcome!');
     embed.setDescription('All contributions (no matter if small) are always welcome.');
     embed.addField(
