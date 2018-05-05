@@ -21,7 +21,7 @@
       },
       {
         "package": "SwiftyMath",
-        "repositoryURL": "git@github.com:taketo1024/SwiftyMath.git",
+        "repositoryURL": "https://github.com/taketo1024/SwiftyMath.git",
         "state": {
           "branch": "master",
           "revision": "ba669bbd4af094f5873e466ebd4488ed54877cfd",
