@@ -56,8 +56,8 @@ client.on(Constants.Events.MESSAGE_CREATE, (message) => {
       message.channel.send(content).then(sentMessage => {
         if (sentMessage) {
           replyMessages[message.id] = sentMessage;
-          message.react('🛠')
-            .then(reaction => {
+          if (executed[message.id]) {
+            message.react('🛠').then(reaction => {
               const filter = (reaction, user) => reaction.emoji.name === '🛠' && user.id !== client.user.id;
               const collector = message.createReactionCollector(filter);
               collector.on('collect', reaction => {
@@ -69,6 +69,7 @@ client.on(Constants.Events.MESSAGE_CREATE, (message) => {
                 }
               });
             });
+          }
         }
       });
     }
