@@ -51,7 +51,6 @@ client.on(Constants.Events.READY, () => {
 });
 
 client.on(Constants.Events.MESSAGE_CREATE, (message) => {
-  message.channel.startTyping();
   processMessage(message).then(content => {
     message.channel.stopTyping();
     if (content) {
@@ -79,8 +78,7 @@ client.on(Constants.Events.MESSAGE_CREATE, (message) => {
 });
 
 client.on(Constants.Events.MESSAGE_UPDATE, (oldMessage, newMessage) => {
-  const message = replyMessages[oldMessage.id]
-  message.channel.startTyping();
+  const message = replyMessages[oldMessage.id];
   if (message) {
     processMessage(newMessage).then(content => {
       message.channel.stopTyping();
@@ -108,6 +106,8 @@ function processMessage(message) {
   if (!message.isMentioned(client.user) || message.author.bot) {
     return new Promise((resolve, reject) => { resolve(); });
   }
+
+  message.channel.startTyping();
 
   const content = message.cleanContent;
 
