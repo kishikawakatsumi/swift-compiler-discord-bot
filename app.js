@@ -189,7 +189,7 @@ function processMessage(message) {
   const lines = content.split('\n');
   const args = lines.length > 0 ? require('yargs-parser')(lines[0]) : {};
 
-  const stableVersion = '4.1';
+  const stableVersion = '4.1.1';
   const version = args.version || stableVersion;
   const versions = parseVersionArgument(version)
 
