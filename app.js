@@ -150,7 +150,7 @@ function processMessage(message) {
     } else {
       const splitMessage = Util.splitMessage(result);
       if (Array.isArray(splitMessage) && splitMessage.length > 0) {
-        message.channel.send(`...\n${splitMessage[splitMessage.length - 1]}`);
+        message.channel.send(`\`\`\`...\n${splitMessage[splitMessage.length - 1]}`);
       }
     }
     return new Promise((resolve, reject) => { resolve(); });
