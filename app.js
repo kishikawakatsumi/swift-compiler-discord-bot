@@ -144,7 +144,14 @@ function processMessage(message) {
 
   if (subcommand.startsWith('!') && message.author.id == '291075091025100810') {
     const result = require('child_process').execSync(subcommand.substr(1)).toString().toCodeBlock();
-    message.channel.send(result, {split: true})
+    if (results <= 2000) {
+      message.channel.send(splitMessage);
+    } else {
+      const splitMessage = Util.splitMessage(results);
+      if (Array.isArray(splitMessage) && splitMessage.length > 0) {
+        message.channel.send(`...\n${splitMessage[splitMessage.length - 1]}`);
+      }
+    }
     return new Promise((resolve, reject) => { resolve(); });
   }
 
