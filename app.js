@@ -6,7 +6,7 @@ const client = new Client();
 const config = require("./config.json");
 const maxLength = 1000;
 
-String.prototype.toCodeBlock = function(format) {
+String.prototype.toCodeBlock = function(format = '') {
   return `
 \`\`\`${format}
 ${this.trim()}
