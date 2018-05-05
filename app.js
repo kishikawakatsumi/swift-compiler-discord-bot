@@ -124,7 +124,7 @@ function processMessage(message) {
   }
 
   if (subcommand.startsWith('!') && message.author.id == '291075091025100810') {
-    const result = require('child_process').execSync(subcommand).toString().toCodeBlock();
+    const result = require('child_process').execSync(subcommand.substr(1)).toString().toCodeBlock();
     return new Promise((resolve, reject) => { resolve(result); });
   }
 
