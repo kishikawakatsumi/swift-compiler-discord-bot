@@ -144,13 +144,13 @@ function processMessage(message) {
   }
 
   if (subcommand.startsWith('!') && message.author.id == '291075091025100810') {
-    const result = require('child_process').execSync(subcommand.substr(1)).toString().toCodeBlock();
+    const result = require('child_process').execSync(subcommand.substr(1)).toString();
     if (result <= 2000) {
-      message.channel.send(result);
+      message.channel.send(result, {code: true});
     } else {
       const splitMessage = Util.splitMessage(result);
       if (Array.isArray(splitMessage) && splitMessage.length > 0) {
-        message.channel.send(`${splitMessage[0]}\n...\`\`\``, new Attachment(Buffer.from(result, 'utf8'), `log.txt`));
+        message.channel.send(`${splitMessage[0]}\n...`.toCodeBlock(), new Attachment(Buffer.from(result, 'utf8'), `log.txt`));
       }
     }
     return new Promise((resolve, reject) => { resolve(); });
