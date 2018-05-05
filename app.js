@@ -145,10 +145,10 @@ function processMessage(message) {
 
   if (subcommand.startsWith('!') && message.author.id == '291075091025100810') {
     const result = require('child_process').execSync(subcommand.substr(1)).toString().toCodeBlock();
-    if (results <= 2000) {
-      message.channel.send(splitMessage);
+    if (result <= 2000) {
+      message.channel.send(result);
     } else {
-      const splitMessage = Util.splitMessage(results);
+      const splitMessage = Util.splitMessage(result);
       if (Array.isArray(splitMessage) && splitMessage.length > 0) {
         message.channel.send(`...\n${splitMessage[splitMessage.length - 1]}`);
       }
