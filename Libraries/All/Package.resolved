@@ -12,11 +12,11 @@
       },
       {
         "package": "RxSwift",
-        "repositoryURL": "git@github.com:ReactiveX/RxSwift.git",
+        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
         "state": {
-          "branch": "master",
-          "revision": "ba41245d067af562c6e61b9439ea1686c1fb60ad",
-          "version": null
+          "branch": null,
+          "revision": "3e848781c7756accced855a6317a4c2ff5e8588b",
+          "version": "4.1.2"
         }
       },
       {
