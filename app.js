@@ -172,6 +172,9 @@ function processMessage(message) {
   }
   return Promise.all(
     versions.map(version => {
+      if (version.length == 1) {
+        version = parseInt(version).toFixed(1).toString();
+      }
       return post(message, code, version, command, options, timeout);
     })
   ).then(results => {
