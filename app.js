@@ -150,19 +150,32 @@ function processMessage(message) {
       });
       return new Promise((resolve, reject) => { resolve(); });
     }
-    if (subcommand == '!install') {
+    if (subcommand.startsWith('!install')) {
+      let tag = subcommand.split(' ')[1];
+      let branch = ''
+      let version = ''
+      if (tag.includes('DEVELOPMENT')) {
+        if (tag.startsWith('swift-DEVELOPMENT')) {
+          branch = 'development';
+        } else {
+          branch = tag.split('DEVELOPMENT')[0] + 'branch';
+        }
+        version = tag.split('DEVELOPMENT-SNAPSHOT-')[1];
+      } else if (tag.includes('RELEASE')) {
+        branch = tag.toLowerCase();
+        version = tag.replace(/swift-/g, '').replace(/-RELEASE/g, '');
+      } else {
+        message.channel.send(`Cannot install '${tag}' version of Swift`, {code: true});
+        return new Promise((resolve, reject) => { resolve(); });
+      }
+
+      const command = `docker build --no-cache=true --rm=true --tag=kishikawakatsumi/swift:${version} . --build-arg SWIFT_BRANCH=${branch} --build-arg SWIFT_VERSION=${tag}`
+      execCommand(subcommand.substr(1), message);
+
       return new Promise((resolve, reject) => { resolve(); });
     }
 
-    const result = require('child_process').execSync(subcommand.substr(1)).toString();
-    if (result <= 2000) {
-      message.channel.send(result, {code: true});
-    } else {
-      const splitMessage = Util.splitMessage(result);
-      if (Array.isArray(splitMessage) && splitMessage.length > 0) {
-        message.channel.send(`${splitMessage[0]}\n...`.toCodeBlock(), new Attachment(Buffer.from(result, 'utf8'), `log.txt`));
-      }
-    }
+    execCommand(subcommand.substr(1), message);
     return new Promise((resolve, reject) => { resolve(); });
   }
 
@@ -359,4 +372,22 @@ function installList() {
     `,
     variables: { owner: 'apple', name: 'swift', cursor: '' }
   });
+}
+
+function execCommand(command, message) {
+  let result = '';
+  try {
+    result = require('child_process').execSync(command).toString();
+  } catch (e) {
+    result = e.stderr.toString();
+  }
+
+  if (result.length <= 2000) {
+    message.channel.send(result, {code: true});
+  } else {
+    const splitMessage = Util.splitMessage(result);
+    if (Array.isArray(splitMessage) && splitMessage.length > 0) {
+      message.channel.send(`${splitMessage[0]}\n...`.toCodeBlock(), new Attachment(Buffer.from(result, 'utf8'), `log.txt`));
+    }
+  }
 }
