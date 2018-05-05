@@ -23,8 +23,8 @@
         "package": "SwiftyMath",
         "repositoryURL": "https://github.com/taketo1024/SwiftyMath.git",
         "state": {
-          "branch": "master",
-          "revision": "ba669bbd4af094f5873e466ebd4488ed54877cfd",
+          "branch": null,
+          "revision": "8a70d3920b45222faf6b05ddfc926df24f2ae228",
           "version": null
         }
       }
