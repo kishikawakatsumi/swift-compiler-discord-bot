@@ -44,6 +44,7 @@ Subcommands:
   `.toCodeBlock();
 
 const replyMessages = {};
+const executed = {};
 
 client.on(Constants.Events.READY, () => {
   console.log("Swift compiler bot is ready!");
@@ -55,6 +56,19 @@ client.on(Constants.Events.MESSAGE_CREATE, (message) => {
       message.channel.send(content).then(sentMessage => {
         if (sentMessage) {
           replyMessages[message.id] = sentMessage;
+          message.react('🛠')
+            .then(reaction => {
+              const filter = (reaction, user) => reaction.emoji.name === '🛠' && user.id !== client.user.id;
+              const collector = message.createReactionCollector(filter);
+              collector.on('collect', reaction => {
+                const code = executed[message.id]
+                if (code) {
+                  Promise.all([run(code.code, 'latest', code.command, code.options, code.timout)]).then(results =>{
+                    message.channel.send(makeEmbed(message, code.code, results));
+                  });
+                }
+              });
+            });
         }
       });
     }
@@ -175,34 +189,11 @@ function processMessage(message) {
       if (version.length == 1) {
         version = parseInt(version).toFixed(1).toString();
       }
+      executed[message.id] = {code: code, version: version, command: command, options: options, timeout: timeout};
       return run(code, version, command, options, timeout);
     })
   ).then(results => {
-    const embed = new RichEmbed();
-
-    embed.setAuthor(message.author.username, message.author.avatarURL);
-    embed.setDescription(code.toCodeBlock('swift'))
-    embed.setTimestamp(new Date());
-
-    results.forEach(result => {
-      if (result.version) {
-        embed.addField('Version:', result.version);
-      }
-      if (result.stdout && result.stdout.text) {
-        embed.addField('Output:', result.stdout.text);
-      }
-      if (result.stdout && result.stdout.file) {
-        message.channel.send(result.stdout.file);
-      }
-      if (result.stderr && result.stderr.text) {
-        embed.addField('Error:', result.stderr.text);
-      }
-      if (result.stderr && result.stderr.file) {
-        message.channel.send(result.stderr.file);
-      }
-    });
-
-    return embed;
+    return makeEmbed(message, code, results);
   });
 }
 
@@ -262,6 +253,34 @@ function run(code, version, command, options, timeout) {
   }).catch(error => {
     return `❗️Unexpected error: ${error}`;
   });
+}
+
+function makeEmbed(message, code, results) {
+  const embed = new RichEmbed();
+
+  embed.setAuthor(message.author.username, message.author.avatarURL);
+  embed.setDescription(code.toCodeBlock('swift'))
+  embed.setTimestamp(new Date());
+
+  results.forEach(result => {
+    if (result.version) {
+      embed.addField('Version:', result.version);
+    }
+    if (result.stdout && result.stdout.text) {
+      embed.addField('Output:', result.stdout.text);
+    }
+    if (result.stdout && result.stdout.file) {
+      message.channel.send(result.stdout.file);
+    }
+    if (result.stderr && result.stderr.text) {
+      embed.addField('Error:', result.stderr.text);
+    }
+    if (result.stderr && result.stderr.file) {
+      message.channel.send(result.stderr.file);
+    }
+  });
+
+  return embed;
 }
 
 function formatVersion(version) {
