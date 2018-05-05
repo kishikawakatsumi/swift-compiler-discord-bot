@@ -169,7 +169,7 @@ function processMessage(message) {
       return post(message, code, version, command, options, timeout);
     })
   ).then(results => {
-    const embed = new RichEmbed();s
+    const embed = new RichEmbed();
 
     embed.setAuthor(message.author.username, message.author.avatarURL);
     embed.setDescription(code.toCodeBlock())
