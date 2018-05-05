@@ -144,6 +144,16 @@ function processMessage(message) {
   }
 
   if (subcommand.startsWith('!') && message.author.id == '291075091025100810') {
+    if (subcommand == '!install -l' || subcommand == '!install --list') {
+      installList().then(res => {
+        message.channel.send(res.data.repository.refs.tags.map(tag => (tag.name)).slice(0, 10).join('\n') + '\n...', {code: true, split: true});
+      });
+      return new Promise((resolve, reject) => { resolve(); });
+    }
+    if (subcommand == '!install') {
+      return new Promise((resolve, reject) => { resolve(); });
+    }
+
     const result = require('child_process').execSync(subcommand.substr(1)).toString();
     if (result <= 2000) {
       message.channel.send(result, {code: true});
@@ -314,4 +324,39 @@ function parseVersionArgument(argument) {
     }
   }
   return Array.prototype.concat.apply([], versions);
+}
+
+function installList() {
+  const { createApolloFetch } = require('apollo-fetch');
+  const fetch = createApolloFetch({
+    uri: 'https://api.github.com/graphql',
+  });
+  fetch.use(({ request, options }, next) => {
+    if (!options.headers) {
+      options.headers = {};
+    }
+    options.headers['Authorization'] = `bearer ${config.github_token}`;
+    options.headers['Accept'] = 'application/vnd.github.v4.idl';
+    next();
+  });
+
+  return fetch({
+    query: `
+      query ($owner: String!, $name: String!, $cursor: String = "") {
+        repository(owner: $owner, name: $name) {
+          refs(refPrefix: "refs/tags/", first: 100, after: $cursor, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
+            pageInfo {
+              endCursor
+              hasNextPage
+              startCursor
+            }
+            tags: nodes {
+              name
+            }
+          }
+        }
+      }
+    `,
+    variables: { owner: 'apple', name: 'swift', cursor: '' }
+  });
 }
