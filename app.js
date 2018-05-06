@@ -150,7 +150,7 @@ function processMessage(message) {
   if (subcommand.startsWith('!') && message.author.id == '291075091025100810') {
     if (subcommand == '!install -l' || subcommand == '!install --list') {
       installList().then(res => {
-        message.channel.send(res.data.repository.refs.tags.map(tag => (tag.name)).join('\n') + '\n...', {code: true, split: true});
+        message.channel.send(res.data.repository.tags.tags.map(tag => (tag.name)).join('\n') + '\n...', {code: true, split: true});
       });
       return new Promise((resolve, reject) => { resolve(); });
     }
@@ -360,10 +360,8 @@ function installList(count = 10) {
     query {
       repository(owner: "apple", name: "swift") {
         tags:refs(refPrefix: "refs/tags/", first: ${count}, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
-          edges {
-            tag:node {
-              name
-            }
+          tags: nodes {
+            name
           }
         }
       }
