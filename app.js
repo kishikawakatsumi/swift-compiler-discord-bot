@@ -3,7 +3,7 @@
 const { Client, RichEmbed, Attachment, Util, Constants } = require('discord.js');
 const client = new Client();
 
-const config = require("./config.json");
+const config = require('./config.json');
 const maxLength = 1000;
 
 String.prototype.toCodeBlock = function(format = '') {
@@ -47,7 +47,7 @@ const replyMessages = {};
 const executed = {};
 
 client.on(Constants.Events.READY, () => {
-  console.log("Swift compiler bot is ready!");
+  console.log('Swift compiler bot is ready!');
 });
 
 client.on(Constants.Events.MESSAGE_CREATE, (message) => {
@@ -62,9 +62,9 @@ client.on(Constants.Events.MESSAGE_CREATE, (message) => {
               const filter = (reaction, user) => reaction.emoji.name === '🛠' && user.id !== client.user.id;
               const collector = message.createReactionCollector(filter);
               collector.on('collect', reaction => {
-                const code = executed[message.id]
+                const code = executed[message.id];
                 if (code) {
-                  Promise.all([run(code.code, 'latest', code.command, code.options, code.timout)]).then(results =>{
+                  Promise.all([run(code.code, 'latest', code.command, code.options, code.timout)]).then(results => {
                     message.channel.send(makeEmbed(message, code.code, results));
                   });
                 }
@@ -74,7 +74,7 @@ client.on(Constants.Events.MESSAGE_CREATE, (message) => {
         }
       });
     }
-  })
+  });
 });
 
 client.on(Constants.Events.MESSAGE_UPDATE, (oldMessage, newMessage) => {
@@ -89,12 +89,12 @@ client.on(Constants.Events.MESSAGE_UPDATE, (oldMessage, newMessage) => {
           }
         });
       }
-    })
+    });
   }
 });
 
 client.on(Constants.Events.MESSAGE_DELETE, (oldMessage, newMessage) => {
-  const message = replyMessages[oldMessage.id]
+  const message = replyMessages[oldMessage.id];
   if (message) {
     message.delete();
   }
@@ -156,8 +156,8 @@ function processMessage(message) {
     }
     if (subcommand.startsWith('!install')) {
       let tag = subcommand.split(' ')[1];
-      let branch = ''
-      let version = ''
+      let branch = '';
+      let version = '';
       if (tag.includes('DEVELOPMENT')) {
         if (tag.startsWith('swift-DEVELOPMENT')) {
           branch = 'development';
@@ -173,7 +173,7 @@ function processMessage(message) {
         return new Promise((resolve, reject) => { resolve(); });
       }
 
-      const command = `docker build --no-cache=true --rm=true --tag=kishikawakatsumi/swift:${version} . --build-arg SWIFT_BRANCH=${branch} --build-arg SWIFT_VERSION=${tag}`
+      const command = `docker build --no-cache=true --rm=true --tag=kishikawakatsumi/swift:${version} . --build-arg SWIFT_BRANCH=${branch} --build-arg SWIFT_VERSION=${tag}`;
       execCommand(command, message);
 
       return new Promise((resolve, reject) => { resolve(); });
@@ -195,7 +195,7 @@ function processMessage(message) {
 
   const stableVersion = '4.1.1';
   const version = args.version || stableVersion;
-  const versions = parseVersionArgument(version)
+  const versions = parseVersionArgument(version);
 
   const defaultCommand = 'swift';
   const command = args.command || defaultCommand;
@@ -240,7 +240,7 @@ function run(code, version, command, options, timeout) {
     resolveWithFullResponse: true
   }).then(response => {
     if (response.statusCode != 200) {
-      return `❗️Server error: ${res.statusCode}`;
+      return `❗️Server error: ${response.statusCode}`;
     }
 
     const results = response.body;
@@ -292,7 +292,7 @@ function makeEmbed(message, code, results) {
   const embed = new RichEmbed();
 
   embed.setAuthor(message.author.username, message.author.avatarURL);
-  embed.setDescription(code.toCodeBlock('swift'))
+  embed.setDescription(code.toCodeBlock('swift'));
   embed.setTimestamp(new Date());
 
   results.forEach(result => {
@@ -317,7 +317,7 @@ function makeEmbed(message, code, results) {
 }
 
 function formatVersion(version) {
-  const versionLines = version.split('\n')
+  const versionLines = version.split('\n');
   if (versionLines.length > 0) {
     version = versionLines[0];
   }
@@ -325,15 +325,15 @@ function formatVersion(version) {
 }
 
 function parseVersionArgument(argument) {
-  let versions = []
+  let versions = [];
   if (Array.isArray(argument)) {
     versions = argument.map((element) => {
       return parseVersionArgument(element);
     });
   } else {
-    argument = argument.toString().trim()
+    argument = argument.toString().trim();
     if (argument.includes(',')) {
-      versions = parseVersionArgument(argument.split(','))
+      versions = parseVersionArgument(argument.split(','));
     } else {
       versions.push(argument);
     }
@@ -346,7 +346,7 @@ function installList(count = 10) {
   const fetch = createApolloFetch({
     uri: 'https://api.github.com/graphql',
   });
-  fetch.use(({ request, options }, next) => {
+  fetch.use(({request, options}, next) => {
     if (!options.headers) {
       options.headers = {};
     }
@@ -384,7 +384,7 @@ function execCommand(command, message) {
   } else {
     const splitMessage = Util.splitMessage(result);
     if (Array.isArray(splitMessage) && splitMessage.length > 0) {
-      message.channel.send(`${splitMessage[0]}\n...`.toCodeBlock(), new Attachment(Buffer.from(result, 'utf8'), `log.txt`));
+      message.channel.send(`${splitMessage[0]}\n...`.toCodeBlock(), new Attachment(Buffer.from(result, 'utf8'), 'log.txt'));
     }
   }
 }
