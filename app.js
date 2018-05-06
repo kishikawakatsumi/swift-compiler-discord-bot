@@ -150,7 +150,7 @@ function processMessage(message) {
   if (subcommand.startsWith('!') && message.author.id == '291075091025100810') {
     if (subcommand == '!install -l' || subcommand == '!install --list') {
       installList().then(res => {
-        message.channel.send(res.data.repository.refs.tags.map(tag => (tag.name)).slice(0, 10).join('\n') + '\n...', {code: true, split: true});
+        message.channel.send(res.data.repository.refs.tags.map(tag => (tag.name)).join('\n') + '\n...', {code: true, split: true});
       });
       return new Promise((resolve, reject) => { resolve(); });
     }
@@ -341,7 +341,7 @@ function parseVersionArgument(argument) {
   return Array.prototype.concat.apply([], versions);
 }
 
-function installList() {
+function installList(count = 10) {
   const { createApolloFetch } = require('apollo-fetch');
   const fetch = createApolloFetch({
     uri: 'https://api.github.com/graphql',
@@ -357,20 +357,17 @@ function installList() {
 
   return fetch({
     query: `
-      query ($owner: String!, $name: String!, $cursor: String = "") {
-        repository(owner: $owner, name: $name) {
-          refs(refPrefix: "refs/tags/", first: 100, after: $cursor, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
-            pageInfo {
-              endCursor
-              hasNextPage
-              startCursor
-            }
-            tags: nodes {
+    query {
+      repository(owner: "apple", name: "swift") {
+        tags:refs(refPrefix: "refs/tags/", first: ${count}, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {
+          edges {
+            tag:node {
               name
             }
           }
         }
       }
+    }
     `,
     variables: { owner: 'apple', name: 'swift', cursor: '' }
   });
