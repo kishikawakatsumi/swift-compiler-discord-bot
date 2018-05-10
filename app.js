@@ -147,8 +147,10 @@ function processMessage(message) {
     return new Promise((resolve, reject) => { resolve(embed); });
   }
 
-  if ((subcommand.startsWith('!') || subcommand.startsWith('#')) && message.author.id == '291075091025100810') {
-    if (subcommand == '!install -l' || subcommand == '!install --list' || subcommand == '#install -l' || subcommand == '#install --list') {
+  if ((subcommand.startsWith('!') || subcommand.startsWith('#') || subcommand.startsWith('$')) && message.author.id == '291075091025100810') {
+    if (subcommand == '!install -l' || subcommand == '!install --list' ||
+        subcommand == '#install -l' || subcommand == '#install --list' ||
+        subcommand == '$install -l' || subcommand == '$install --list') {
       installList().then(res => {
         message.channel.send(res.data.repository.tags.tags.map(tag => (tag.name)).join('\n') + '\n...', {code: true, split: true});
       });
