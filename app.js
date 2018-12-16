@@ -166,7 +166,7 @@ function processMessage(message) {
         } else {
           branch = tag.split('DEVELOPMENT')[0] + 'branch';
         }
-        version = branch + '/' + tag.split('DEVELOPMENT-SNAPSHOT-')[1];
+        version = branch + '_' + tag.split('DEVELOPMENT-SNAPSHOT-')[1];
       } else if (tag.includes('RELEASE')) {
         branch = tag.toLowerCase();
         version = tag.replace(/swift-/g, '').replace(/-RELEASE/g, '');
@@ -175,7 +175,7 @@ function processMessage(message) {
         return new Promise((resolve, reject) => { resolve(); });
       }
 
-      const command = `docker build --no-cache=true --rm=true --tag=kishikawakatsumi/swift:'${version}' . --build-arg SWIFT_BRANCH=${branch} --build-arg SWIFT_VERSION=${tag}`;
+      const command = `docker build --no-cache=true --rm=true --tag=kishikawakatsumi/swift:${version} . --build-arg SWIFT_BRANCH=${branch} --build-arg SWIFT_VERSION=${tag}`;
 
       if (subcommand.split(' ').length == 3 && (subcommand.split(' ')[2] == '--dry-run' || subcommand.split(' ')[2] || '-dry-run')) {
         message.channel.send(command, {code: true});
