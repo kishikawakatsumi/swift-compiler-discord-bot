@@ -176,7 +176,12 @@ function processMessage(message) {
       }
 
       const command = `docker build --no-cache=true --rm=true --tag=kishikawakatsumi/swift:${version} . --build-arg SWIFT_BRANCH=${branch} --build-arg SWIFT_VERSION=${tag}`;
-      execCommand(command, message);
+
+      if (subcommand.split(' ').length == 3 && subcommand.split(' ')[2] == '--dry-run' && subcommand.split(' ')[2] == '-dry-run') {
+        message.channel.send(command, {code: true});
+      } else {
+        execCommand(command, message);
+      }
 
       return new Promise((resolve, reject) => { resolve(); });
     }
