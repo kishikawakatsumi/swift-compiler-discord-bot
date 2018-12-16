@@ -163,10 +163,11 @@ function processMessage(message) {
       if (tag.includes('DEVELOPMENT')) {
         if (tag.startsWith('swift-DEVELOPMENT')) {
           branch = 'development';
+          version = tag.split('DEVELOPMENT-SNAPSHOT-')[1];
         } else {
           branch = tag.split('DEVELOPMENT')[0] + 'branch';
+          version = branch.replace('-branch', '') + '_' + tag.split('DEVELOPMENT-SNAPSHOT-')[1];
         }
-        version = branch + '_' + tag.split('DEVELOPMENT-SNAPSHOT-')[1];
       } else if (tag.includes('RELEASE')) {
         branch = tag.toLowerCase();
         version = tag.replace(/swift-/g, '').replace(/-RELEASE/g, '');
