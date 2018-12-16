@@ -156,7 +156,7 @@ function processMessage(message) {
       });
       return new Promise((resolve, reject) => { resolve(); });
     }
-    if (subcommand.startsWith('!install')) {
+    if (subcommand.startsWith('!install') || subcommand.startsWith('#install') || subcommand.startsWith('$install')) {
       let tag = subcommand.split(' ')[1];
       let branch = '';
       let version = '';
@@ -195,7 +195,7 @@ function processMessage(message) {
   const lines = content.split('\n');
   const args = lines.length > 0 ? require('yargs-parser')(lines[0].replace(/—/g, '--')) : {};
 
-  const stableVersion = '4.1.1';
+  const stableVersion = '4.2.1';
   const version = args.version || stableVersion;
   const versions = parseVersionArgument(version);
 
@@ -203,13 +203,13 @@ function processMessage(message) {
   const command = args.command || defaultCommand;
 
   let options = args.options || '';
-  if (options.length == 0 && command == defaultCommand && version == stableVersion) {
-    options = [
-      '-I /Libraries/All/.build/release',
-      '-L /Libraries/All/.build/release',
-      '-lAll'
-    ].join(' ');
-  }
+  // if (options.length == 0 && command == defaultCommand && version == stableVersion) {
+  //   options = [
+  //     '-I /Libraries/All/.build/release',
+  //     '-L /Libraries/All/.build/release',
+  //     '-lAll'
+  //   ].join(' ');
+  // }
 
   const defaultTimeout = 30;
   let timeout = parseInt(args.timeout || defaultTimeout);
