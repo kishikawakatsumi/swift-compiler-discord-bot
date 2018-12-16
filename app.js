@@ -166,7 +166,7 @@ function processMessage(message) {
         } else {
           branch = tag.split('DEVELOPMENT')[0] + 'branch';
         }
-        version = branch + '-' + tag.split('DEVELOPMENT-SNAPSHOT-')[1];
+        version = branch + '_' + tag.split('DEVELOPMENT-SNAPSHOT-')[1];
       } else if (tag.includes('RELEASE')) {
         branch = tag.toLowerCase();
         version = tag.replace(/swift-/g, '').replace(/-RELEASE/g, '');
