@@ -175,7 +175,7 @@ function processMessage(message) {
         return new Promise((resolve, reject) => { resolve(); });
       }
 
-      const command = `docker build --no-cache=true --rm=true --tag=kishikawakatsumi/swift:${version} . --build-arg SWIFT_BRANCH=${branch} --build-arg SWIFT_VERSION=${tag}`;
+      const command = `docker build --no-cache=true --rm=true --tag=kishikawakatsumi/swift:'${version}' . --build-arg SWIFT_BRANCH=${branch} --build-arg SWIFT_VERSION=${tag}`;
 
       if (subcommand.split(' ').length == 3 && (subcommand.split(' ')[2] == '--dry-run' || subcommand.split(' ')[2] || '-dry-run')) {
         message.channel.send(command, {code: true});
