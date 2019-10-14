@@ -11,19 +11,19 @@
   "license": "MIT",
   "dependencies": {
     "apollo-fetch": "^0.7.0",
-    "bufferutil": "^3.0.4",
-    "discord.js": "^11.3.2",
+    "bufferutil": "^4.0.1",
+    "discord.js": "^11.5.1",
     "erlpack": "github:discordapp/erlpack",
-    "libsodium-wrappers": "^0.7.3",
-    "node-opus": "^0.2.7",
-    "opusscript": "0.0.6",
-    "request": "^2.85.0",
-    "request-promise": "^4.2.2",
-    "sodium": "^2.0.3",
-    "uws": "^9.148.0",
-    "yargs-parser": "^9.0.2"
+    "libsodium-wrappers": "^0.7.5",
+    "node-opus": "^0.3.2",
+    "opusscript": "0.0.7",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "sodium": "^3.0.2",
+    "uws": "^100.0.1",
+    "yargs-parser": "^15.0.0"
   },
   "devDependencies": {
-    "eslint": "^4.19.1"
+    "eslint": "^6.5.1"
   }
 }
