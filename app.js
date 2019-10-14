@@ -209,13 +209,6 @@ function processMessage(message) {
   const command = args.command || defaultCommand;
 
   let options = args.options || '';
-  // if (options.length == 0 && command == defaultCommand && version == stableVersion) {
-  //   options = [
-  //     '-I /Libraries/All/.build/release',
-  //     '-L /Libraries/All/.build/release',
-  //     '-lAll'
-  //   ].join(' ');
-  // }
 
   const defaultTimeout = 30;
   let timeout = parseInt(args.timeout || defaultTimeout);
