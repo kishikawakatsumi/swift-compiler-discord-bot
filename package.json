@@ -14,16 +14,16 @@
     "bufferutil": "^4.0.1",
     "discord.js": "^11.5.1",
     "erlpack": "github:discordapp/erlpack",
-    "libsodium-wrappers": "^0.7.5",
-    "node-opus": "^0.3.2",
+    "libsodium-wrappers": "^0.7.6",
+    "node-opus": "^0.3.3",
     "opusscript": "0.0.7",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4",
+    "request-promise": "^4.2.5",
     "sodium": "^3.0.2",
     "uws": "^100.0.1",
-    "yargs-parser": "^15.0.0"
+    "yargs-parser": "^16.1.0"
   },
   "devDependencies": {
-    "eslint": "^6.5.1"
+    "eslint": "^6.6.0"
   }
 }
