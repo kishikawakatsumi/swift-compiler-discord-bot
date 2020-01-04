@@ -24,6 +24,6 @@
     "yargs-parser": "^16.1.0"
   },
   "devDependencies": {
-    "eslint": "^6.6.0"
+    "eslint": "^6.8.0"
   }
 }
