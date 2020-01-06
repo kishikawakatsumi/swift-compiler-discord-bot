@@ -198,6 +198,19 @@ function processMessage(message) {
   }
 
   const code = match[1];
+
+  if (code.split('\n').some(line => line.includes('import SwiftUI'))) {
+    const timeout = 60;
+    return runSwiftUI(code, timeout)
+      .then(results => {
+        if (results.errors) {
+          message.channel.send('```\n' + results.errors + '\n```');
+        } else {
+          results.previews.forEach(preview => message.channel.send(preview));
+        }
+      });
+  }
+
   const lines = content.split('\n');
   const args = lines.length > 0 ? require('yargs-parser')(lines[0].replace(/—/g, '--')) : {};
 
@@ -228,6 +241,26 @@ function processMessage(message) {
     })
   ).then(results => {
     return makeEmbed(message, code, results);
+  });
+}
+
+function runSwiftUI(code, timeout) {
+  const request = require('request-promise');
+  return request({
+    method: 'POST',
+    uri: 'https://swiftui-playground.kishikawakatsumi.com/run',
+    body: {code: code, timeout: timeout},
+    json: true,
+    resolveWithFullResponse: true
+  }).then(response => {
+    if (response.statusCode != 200) {
+      return `❗️Server error: ${response.statusCode}`;
+    }
+
+    const results = response.body;
+    return results;
+  }).catch(error => {
+    return `❗️Unexpected error: ${error}`;
   });
 }
 
