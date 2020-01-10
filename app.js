@@ -197,7 +197,7 @@ function processMessage(message) {
         if (results.errors) {
           message.channel.send('```\n' + results.errors + '\n```');
         } else {
-          results.previews.forEach(preview => message.channel.send(preview));
+          results.previews.forEach(preview => message.channel.send(preview.link));
         }
       });
   }
