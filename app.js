@@ -37,6 +37,11 @@ Examples:
   print("Hello world!")
   \`​\`​\`
 
+  @swiftbot --platform=mac
+  \`​\`​\`
+  print("Hello world!")
+  \`​\`​\`
+
 Subcommands:
   @swiftbot versions: show available Swift toolchain versions
   @swiftbot contribute: show repository URLs
@@ -57,20 +62,6 @@ client.on(Constants.Events.MESSAGE_CREATE, (message) => {
       message.channel.send(content).then(sentMessage => {
         if (sentMessage) {
           replyMessages[message.id] = sentMessage;
-          if (executed[message.id]) {
-            message.react('🛠').then(reaction => {
-              const filter = (reaction, user) => reaction.emoji.name === '🛠' && user.id !== client.user.id;
-              const collector = message.createReactionCollector(filter);
-              collector.on('collect', reaction => {
-                const code = executed[message.id];
-                if (code) {
-                  Promise.all([run(code.code, 'latest', code.command, code.options, code.timout)]).then(results => {
-                    message.channel.send(makeEmbed(message, code.code, results));
-                  });
-                }
-              });
-            });
-          }
         }
       });
     }
@@ -237,7 +228,7 @@ function processMessage(message) {
         version = parseInt(version).toFixed(1).toString();
       }
       executed[message.id] = {code: code, version: version, command: command, options: options, timeout: timeout};
-      return run(code, version, command, options, timeout);
+      return run(code, version, command, options, timeout, args.platform);
     })
   ).then(results => {
     return makeEmbed(message, code, results);
@@ -264,11 +255,11 @@ function runSwiftUI(code, timeout) {
   });
 }
 
-function run(code, version, command, options, timeout) {
+function run(code, version, command, options, timeout, platform) {
   const request = require('request-promise');
   return request({
     method: 'POST',
-    uri: 'https://swift-playground.kishikawakatsumi.com/run',
+    uri: (platform == 'macos' || options.platform == 'osx' || options.platform == 'mac') ? 'https://swiftui-playground.kishikawakatsumi.com/run' : 'https://swift-playground.kishikawakatsumi.com/run',
     body: {code: code, toolchain_version: version, command: command, options: options, timeout: timeout},
     json: true,
     resolveWithFullResponse: true
