@@ -259,7 +259,7 @@ function run(code, version, command, options, timeout, platform) {
   const request = require('request-promise');
   return request({
     method: 'POST',
-    uri: (platform == 'macos' || options.platform == 'osx' || options.platform == 'mac') ? 'https://swiftui-playground.kishikawakatsumi.com/run' : 'https://swift-playground.kishikawakatsumi.com/run',
+    uri: (platform == 'macos' || platform == 'osx' || platform == 'mac') ? 'https://swiftui-playground.kishikawakatsumi.com/run' : 'https://swift-playground.kishikawakatsumi.com/run',
     body: {code: code, toolchain_version: version, command: command, options: options, timeout: timeout},
     json: true,
     resolveWithFullResponse: true
