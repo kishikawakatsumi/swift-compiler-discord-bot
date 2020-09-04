@@ -21,7 +21,7 @@
     "request-promise": "^4.2.5",
     "sodium": "^3.0.2",
     "uws": "^100.0.1",
-    "yargs-parser": "^16.1.0"
+    "yargs-parser": "^18.1.2"
   },
   "devDependencies": {
     "eslint": "^6.8.0"
