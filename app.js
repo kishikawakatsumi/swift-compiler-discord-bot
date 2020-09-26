@@ -1,6 +1,6 @@
 'use strict';
 
-const { Client, RichEmbed, Attachment, Util, Constants } = require('discord.js');
+const { Client, MessageEmbed, Attachment, Util, Constants } = require('discord.js');
 const client = new Client();
 
 const config = require('./config.json');
@@ -115,7 +115,7 @@ function processMessage(message) {
       return `${results.versions.join('\n')}`.toCodeBlock();
     });
   } else if (subcommand == 'contribute') {
-    const embed = new RichEmbed();
+    const embed = new MessageEmbed();
     embed.setAuthor(
       'Kishikawa Katsumi',
       'https://cdn.discordapp.com/avatars/291075091025100810/39d60f97ea2bca395f1992c42f25107c.png',
@@ -314,7 +314,7 @@ function run(code, version, command, options, timeout, platform) {
 }
 
 function makeEmbed(message, code, results) {
-  const embed = new RichEmbed();
+  const embed = new MessageEmbed();
 
   embed.setAuthor(message.author.username, message.author.avatarURL);
   embed.setDescription(code.toCodeBlock('swift'));
