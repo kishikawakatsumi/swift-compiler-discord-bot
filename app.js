@@ -94,7 +94,7 @@ client.on(Constants.Events.MESSAGE_DELETE, (oldMessage, newMessage) => {
 client.login(config.token);
 
 function processMessage(message) {
-  if (!message.isMentioned(client.user) || message.author.bot) {
+  if (!message.mentions.has(client.user) || message.author.bot) {
     return new Promise((resolve, reject) => { resolve(); });
   }
 
